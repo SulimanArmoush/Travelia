@@ -16,12 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('imgs');        
-            $table->unsignedBigInteger('locatiion_id');
+            $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('date_id');
             $table->timestamps();
 
-            $table->foreign('locatiion_id')->references('id')->on('locatiions')->onDelete('cascade');
+            $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
         });
