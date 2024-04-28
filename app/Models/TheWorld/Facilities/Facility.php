@@ -3,8 +3,8 @@
 namespace App\Models\TheWorld\Facilities;
 
 use App\Models\Permissions\User;
-use App\Models\TheWorld\Area;
 use App\Models\Dates\Date;
+use App\Models\TheWorld\Area;
 use App\Models\TheWorld\Facilities\Hotels\Hotel;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
@@ -17,23 +17,26 @@ class Facility extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'area_id',
         'description',
-        'address',
         'imgs',
+        'locatiion_id',
         'user_id',
         'date_id',
     ] ;
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class ,'locatiion_id');
+    }
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function area()
+    public function location()
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(Location::class);
     }
 
     public function date()
@@ -53,6 +56,4 @@ class Facility extends Model
     public function organizer() { 
         return $this->hasOne(Organizer::class); 
     } 
-
-
 }

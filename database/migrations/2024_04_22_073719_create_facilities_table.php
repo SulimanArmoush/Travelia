@@ -14,15 +14,14 @@ return new class extends Migration
         Schema::create('facilities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('area_id');
             $table->string('description');
-            $table->string('address');
-            $table->string('imgs');
+            $table->string('imgs');        
+            $table->unsignedBigInteger('locatiion_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('date_id');
             $table->timestamps();
 
-            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
+            $table->foreign('locatiion_id')->references('id')->on('locatiions')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
         });
