@@ -17,11 +17,13 @@ class FacilityController extends Controller
             'imgs.*' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
         ]);
         if ($validator->fails()) {return response()->json($validator->errors()->all(), status: 400);}
+
         $images = $this->upload($request->imgs);
+        
         Facility::find(auth()->user()->facility()->first()->id)->update([
             'imgs'=> $images,
         ]);
         $the_images = json_decode($images);
-        return response()->json(['imgs'=> $the_images,'message' => 'Your images successfully'], 200);
+        return response()->json(['imgs'=> $the_images,'message' => 'Your images Added successfully'], 200);
     }
 }

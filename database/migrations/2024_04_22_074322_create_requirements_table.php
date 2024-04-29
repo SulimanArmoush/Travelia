@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requests', function (Blueprint $table) {
+        Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('facility_id');
-            $table->string('status');
+            $table->set('status', ['onHold', 'accept', 'reject'])->default('onHold');
             $table->timestamps();
 
 

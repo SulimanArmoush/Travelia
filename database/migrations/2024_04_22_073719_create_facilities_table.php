@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('imgs')->nullable();
-            $table->boolean('status')->default('0');
+            $table->boolean('confirmation')->default('0');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('date_id')->nullable();
