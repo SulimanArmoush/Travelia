@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->string('imgs');        
+            $table->string('imgs')->nullable();
+            $table->boolean('status')->default('0');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('date_id');
+            $table->unsignedBigInteger('date_id')->nullable();
             $table->timestamps();
 
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
         });
     }
+//$table->set('status', ['Preparation', 'Sent', 'Received'])->default('Preparation');
 
     /**
      * Reverse the migrations.

@@ -52,7 +52,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
-            'email' => ['required', 'email','string', 'max:255'], 
+            'email' => ['required', 'email','string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
@@ -107,7 +107,7 @@ class AuthController extends Controller
     public function photo(Request $request){
 
         $validator = validator::make($request->all(), [
-        'photo' => ['image','mimes:jpeg,png,jpg,gif','max:2048'], 
+        'photo' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -125,7 +125,7 @@ class AuthController extends Controller
     public function passport(Request $request){
 
         $validator = validator::make($request->all(), [
-        'passport' => ['image','mimes:jpeg,png,jpg,gif','max:2048'], 
+        'passport' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
