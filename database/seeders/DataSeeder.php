@@ -42,13 +42,13 @@ class DataSeeder extends Seeder
         $the_Admin =
         [
             [
-                'firstName' => 'Suliman',
-                'lastName' => 'Armoush',
-                'email' => 'suliman@gmail.com',
-                'phone' => '0993301016',
-                'password' => '123456789',
+                'firstName' => 'Kinan',
+                'lastName' => 'Hawari',
+                'email' => 'kinan@gmail.com',
+                'phone' => '0957965126',
+                'password' => '12345678',
                 'age' => '23',
-                'address' => 'Damas\Kafarsosa\Lawan',
+                'address' => 'Damas\Midan',
                 'wallet' => '999999.999999',
                 'photo' => 'images/My_photo.jpg',
                 'passport' => 'images/passport_image.jpg',
