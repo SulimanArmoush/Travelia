@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TheWorld\Facilities\Facility;
+
+use App\Models\TheWorld\Facilities\Requirement;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -34,14 +35,17 @@ class TransporterController extends Controller
         }
         $location = $this->createLocation($request->latitude, $request->longitude, $request->area_id);
         $facility = $this->createFacility($request->name,$request->description, $location, Auth::id());
-
+        
         Transporter::create([
             'facility_id'=>$facility,
              'type'=>$request->type,
         ]);
 
+        Requirement::create([
+            'user_id'=> Auth::id(),
+            'facility_id'=>$facility,
+        ]);
+
         return response()->json(['message' => 'Your Account created successfully'], 200);
     }
-
-
 }
