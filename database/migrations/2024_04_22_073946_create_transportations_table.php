@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('transporter_id');
             $table->integer('totalCapacity');
             $table->double('cost');
-            $table->String('type');
-            $table->string('status');
+            $table->set('type', ['normalPlane','businessClassPlane','Pullman','Bus' ,' Van' , 'privateCar']);
+            $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 
             $table->foreign('transporter_id')->references('id')->on('transporters')->onDelete('cascade');

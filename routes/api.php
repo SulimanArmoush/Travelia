@@ -27,6 +27,7 @@ Route::controller(FacilityController::class)->group(function () {
 
 Route::controller(TransporterController::class)->group(function () {
     Route::Post('createTransporterAccount', 'createTransporterAccount')->name('createTransporterAccount');
+    Route::Post('createTransportation', 'createTransportation')->name('createTransportation');
 });
 
 Route::controller(AdminController::class)->group(function () {

@@ -91,7 +91,6 @@ class User extends Authenticatable
     public function facility()
     {
         return $this->hasOne(Facility::class);
-        ;
     }
     public function favorites()
     {

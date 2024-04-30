@@ -24,7 +24,9 @@ class Facility extends Model
         'user_id',
         'date_id',
     ] ;
-
+    public function transporter() { 
+        return $this->hasOne(Transporter::class); 
+    } 
     public function area()
     {
         return $this->belongsTo(Area::class ,'locatiion_id');
@@ -51,9 +53,7 @@ class Facility extends Model
     public function restaurant() { 
         return $this->hasOne(Restaurant::class); 
     } 
-    public function transporter() { 
-        return $this->hasOne(Transporter::class); 
-    } 
+
     public function organizer() { 
         return $this->hasOne(Organizer::class); 
     } 
