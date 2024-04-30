@@ -3,6 +3,7 @@
 namespace App\Models\Permissions;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\TheWorld\Facilities\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -90,15 +91,15 @@ class User extends Authenticatable
     public function facility()
     {
         return $this->hasOne(Facility::class);
+        ;
     }
     public function favorites()
     {
         return $this->belongsToMany(Facility::class, 'favorites');
     }
 
-    public function requests()
-    {
-        return $this->belongsToMany(Facility::class, 'requests');
+    public function recuirement() { 
+        return $this->hasOne(Requirement::class); 
     }
 
 }

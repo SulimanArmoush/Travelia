@@ -46,7 +46,7 @@ class DataSeeder extends Seeder
                 'lastName' => 'Hawari',
                 'email' => 'kinan@gmail.com',
                 'phone' => '0957965126',
-                'password' => '12345678',
+                'password' => bcrypt('12345678'),
                 'age' => '23',
                 'address' => 'Damas\Midan',
                 'wallet' => '999999.999999',
