@@ -10,7 +10,9 @@ class Transportation extends Model
     use HasFactory;
     protected $fillable = ['transporter_id','totalCapacity','cost','type','status'] ;
 
-
+    public static $airTypes = ['normalPlane','businessClassPlane'];
+    public static $landTypes = ['Pullman','Bus' ,'Van' , 'privateCar'];
+    
     
     public function transporterReservations()
     {
