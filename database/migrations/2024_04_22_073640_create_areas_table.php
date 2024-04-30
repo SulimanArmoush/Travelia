@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('imgs');
+            $table->string('imgs')->nullable();
             $table->unsignedBigInteger('city_id');
             $table->timestamps();
 

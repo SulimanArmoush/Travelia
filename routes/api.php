@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FacilityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,4 +29,17 @@ Route::controller(TransporterController::class)->group(function () {
     Route::Post('createTransporterAccount', 'createTransporterAccount')->name('createTransporterAccount');
 });
 
+Route::controller(AdminController::class)->group(function () {
+    Route::Get('getRequiermemts', 'getRequiermemts')->name('getRequiermemts');
+    Route::Get('getRequiermemt/{requiermemt_id}', 'getRequiermemt')->name('getRequiermemt');
+    Route::Put('handlingRequierment/{requiermemt_id}', 'handlingRequierment')->name('handlingRequierment');
+
+});
+
+Route::controller(CountryController::class)->group(function () {
+    Route::Post('createCountry', 'createCountry')->name('createCountry');
+    Route::Post('createCity', 'createCity')->name('createCity');
+    Route::Post('createArea', 'createArea')->name('createArea');
+
+});
 });

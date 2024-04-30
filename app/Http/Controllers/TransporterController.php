@@ -28,7 +28,7 @@ class TransporterController extends Controller
             'latitude'=>['required','string'],
             'longitude'=>['required','string'],
             'area_id' =>['required','integer'],
-            'type' =>['required','string'],
+            'type' =>['required','in:Land,air'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);

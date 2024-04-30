@@ -107,7 +107,7 @@ class AuthController extends Controller
     public function photo(Request $request){
 
         $validator = validator::make($request->all(), [
-        'photo' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
+        'photo' => ['required','image','mimes:jpeg,png,jpg,gif','max:512'], 
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -125,7 +125,7 @@ class AuthController extends Controller
     public function passport(Request $request){
 
         $validator = validator::make($request->all(), [
-        'passport' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
+        'passport' => ['required','image','mimes:jpeg,png,jpg,gif','max:512'], 
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
