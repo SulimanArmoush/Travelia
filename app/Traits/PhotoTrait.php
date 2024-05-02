@@ -20,7 +20,7 @@ trait PhotoTrait
             $imge = $this->saveImage($img);
             $array[] = $imge;
         }
-        return json_encode($array);
+        return $array;
     }
 
 }

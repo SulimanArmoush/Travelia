@@ -90,7 +90,7 @@ class User extends Authenticatable
 
     public function facility()
     {
-        return $this->hasOne(Facility::class);
+        return $this->hasOne(Facility::class)->with('location');
     }
     public function favorites()
     {

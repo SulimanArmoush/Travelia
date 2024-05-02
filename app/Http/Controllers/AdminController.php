@@ -22,7 +22,7 @@ class AdminController extends Controller
 
     public function getRequiermemt($requiermemt_id)
     {
-        $requiermemt_info = Requirement::with('user.facility.location')->find($requiermemt_id);
+        $requiermemt_info = Requirement::with('user.facility')->find($requiermemt_id);
         if (!$requiermemt_info) {
             return response()->json(['Requirement Not Found'], 404);
         }
