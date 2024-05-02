@@ -15,7 +15,6 @@ trait PhotoTrait
     function upload($imgs)
     {
         $array = [];
-        
         foreach ($imgs as $img) {
             $imge = $this->saveImage($img);
             $array[] = $imge;
