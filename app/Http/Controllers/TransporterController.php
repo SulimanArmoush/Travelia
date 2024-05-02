@@ -20,7 +20,7 @@ class TransporterController extends Controller
     public function createTransporterAccount(Request $request)
     {
         if (auth()->user()->role_id != 5) {
-            return response()->json(['message' => 'you are not a Transport_Manager'], 400);
+            return response()->json(['error' => 'you are not a Transport_Manager'], 400);
         }
         $validator = validator::make($request->all(), [
             'name' => ['required', 'string', 'max:25'],
@@ -75,4 +75,11 @@ class TransporterController extends Controller
         }
         return response()->json(['message' => 'Your Transportation created successfully'], 200);
     }
+
+    public function getTransportation($transporter_id)
+    {
+        $transportations = Transportation::Where('transporter_id','=',$transporter_id)->paginate(10);
+        return response()->json(['transportations' => $transportations], 200);
+    } 
+
 }
