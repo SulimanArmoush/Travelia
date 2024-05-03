@@ -2,14 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TheWorld\Facilities\Hotels\Hotel;
+use App\Models\TheWorld\Facilities\Organizers\Organizer;
+use App\Models\TheWorld\Facilities\Requirement;
+use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
+use App\Models\TheWorld\Facilities\Transporters\Transporter;
+
+use Illuminate\Support\Facades\Auth;
+use App\Traits\facilityCreateTrait;
+use App\Traits\PhotoTrait;
 use Illuminate\Http\Request;
 use App\Models\TheWorld\Facilities\Facility;
 use Illuminate\Support\Facades\Validator;
-use App\Traits\PhotoTrait;
 
 class FacilityController extends Controller
 {
-    use PhotoTrait;
+    use facilityCreateTrait, PhotoTrait;
+ 
+    public function createAccount(Request $request)
+    {
+        $validator = validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:25'],
+            'description' => ['required', 'string', 'max:255'],
+            'latitude' => ['required', 'string'],
+            'longitude' => ['required', 'string'],
+            'area_id' => ['required', 'integer'],
+            'type' => ['required', 'in:Land,air'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all(), status: 400);
+        }
+        $location = $this->createLocation($request->latitude, $request->longitude, $request->area_id);
+        $facility = $this->createFacility($request->name, $request->description, $location, Auth::id());
+
+        $roles = [
+            2 => Organizer::class,
+            3 => Hotel::class,
+            4 => Restaurant::class,
+            5 => Transporter::class,
+        ];
+
+        if (array_key_exists(auth()->user()->role_id, $roles)) {
+            $roles[auth()->user()->role_id]::create([
+                'facility_id' => $facility,
+                'type' => $request->type,
+            ]);
+        }
+
+        Requirement::create([
+            'user_id' => Auth::id(),
+            'facility_id' => $facility,
+        ]);
+
+        return response()->json(['message' => 'Your Account created successfully'], 200);
+    }
+ 
+ 
     public function imgUpload(Request $request)
     {
         
