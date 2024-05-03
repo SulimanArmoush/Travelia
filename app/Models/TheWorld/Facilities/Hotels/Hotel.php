@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Hotel extends Model
 {
     use HasFactory;
-    protected $fillable = ['facility_id','starsNum'] ;
+    protected $fillable = ['facility_id','type'] ;
 
     
     public function facility() { 

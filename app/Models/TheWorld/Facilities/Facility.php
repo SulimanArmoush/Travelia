@@ -61,4 +61,9 @@ class Facility extends Model
     public function recuirement() { 
         return $this->hasOne(Requirement::class); 
     }
+
+    
 }
+
+
+
