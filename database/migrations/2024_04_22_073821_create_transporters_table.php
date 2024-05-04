@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transporters', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('facility_id');
-            $table->set('type', ['Land', 'air']);
+            $table->set('type', ['land', 'air']);
             $table->timestamps();
 
             $table->foreign('facility_id')->references('id')->on('facilities')->onDelete('cascade');

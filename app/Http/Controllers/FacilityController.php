@@ -27,7 +27,7 @@ class FacilityController extends Controller
             'latitude' => ['required', 'string'],
             'longitude' => ['required', 'string'],
             'area_id' => ['required', 'integer'],
-            'type' => ['required', 'in:Land,air'],
+            'type' => ['required', 'string'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);

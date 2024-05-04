@@ -23,6 +23,7 @@ class AuthController extends Controller
             'lastName'=> ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', ValidationRule::unique(table: 'users')],
             'password'=> ['required', 'string', 'min:8'],
+            'photo' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
             'role_id'=>'required',
         ]);
         if ($validator->fails()) {
@@ -30,13 +31,14 @@ class AuthController extends Controller
         }
 
         $request['password'] = bcrypt($request['password']);
+        $photoPath = $this->saveImage($request->photo);
 
         $user = User::query()->create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'email' => $request->email ,
             'password' => $request->password ,
-            'wallet' =>0.0,
+            'photo' => $photoPath,
             'role_id' => $request->role_id,
         ]);
 

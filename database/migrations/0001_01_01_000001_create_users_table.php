@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('password');
             $table->integer('age')->nullable();
             $table->string('address')->nullable();
-            $table->double('wallet');
+            $table->double('wallet')->default(0.0);
+            $table->boolean('confirmation')->default('0');
             $table->string('photo')->nullable();
             $table->string('passport')->nullable();
             $table->unsignedBigInteger('role_id');

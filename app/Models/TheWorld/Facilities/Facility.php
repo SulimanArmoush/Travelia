@@ -20,13 +20,10 @@ class Facility extends Model
         'description',
         'imgs',
         'location_id',
-        'confirmation',
         'user_id',
         'date_id',
     ] ;
-    public function transporter() { 
-        return $this->hasOne(Transporter::class); 
-    } 
+
     public function area()
     {
         return $this->belongsTo(Area::class ,'locatiion_id');
@@ -56,6 +53,10 @@ class Facility extends Model
 
     public function organizer() { 
         return $this->hasOne(Organizer::class); 
+    } 
+
+    public function transporter() { 
+        return $this->hasOne(Transporter::class); 
     } 
 
     public function recuirement() { 

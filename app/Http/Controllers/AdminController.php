@@ -59,7 +59,7 @@ class AdminController extends Controller
         ]);
 
         if ($request->status == 'accept') {
-            Facility::find($requirement->facility_id)->update([
+            User::find($requirement->user_id)->update([
                 'confirmation' => '1'
             ]);
             return response()->json(['message' => "You have accepted this account"], 200);
