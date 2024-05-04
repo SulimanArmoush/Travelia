@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Organizer extends Model
 {
     use HasFactory;
-    protected $fillable = ['facility_id','Evaluation'] ;
+    protected $fillable = ['facility_id','type'] ;
 
     
     public function facility() { 

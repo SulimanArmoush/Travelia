@@ -9,16 +9,20 @@ use App\Models\Permissions\User;
 class UserController extends Controller
 {
 
+
     public function getUser($userId)
     {
         $user = User::find($userId);
-        if (!$user) {return response()->json(['error' => 'User not found'], 404);}
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
         $data['user'] = $user;
-        if (in_array($user->role_id, [2, 3, 4, 5])) {$data['facility'] = $user->facility;}
+        if (in_array($user->role_id, [2, 3, 4, 5])) {
+            $user->facility = $user->facility;
+        }
 
-        return response()->json(['user' => $data], 200);
+        return response()->json($user, 200);
     }
-
 
     public function getAllUser()
     {

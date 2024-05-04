@@ -37,7 +37,6 @@ Route::controller(AdminController::class)->group(function () {
     Route::Get('getRequiermemts', 'getRequiermemts')->name('getRequiermemts');
     Route::Get('getRequiermemt/{requiermemt_id}', 'getRequiermemt')->name('getRequiermemt');
     Route::Put('handlingRequierment/{requiermemt_id}', 'handlingRequierment')->name('handlingRequierment');
-
 });
 Route::controller(UserController::class)->group(function () {
     Route::Get('getUser/{userId}', 'getUser')->name('getUser');
@@ -47,13 +46,7 @@ Route::controller(UserController::class)->group(function () {
     Route::Get('getAllRestaurantManager', 'getAllRestaurantManager')->name('getAllRestaurantManager');
     Route::Get('getAllTransporter', 'getAllTransporter')->name('getAllTransporter');
     Route::Get('getAllTourist', 'getAllTourist')->name('getAllTourist');
-
-
 });
-
-
-
-
 
 Route::controller(CountryController::class)->group(function () {
     Route::Post('createCountry', 'createCountry')->name('createCountry');
