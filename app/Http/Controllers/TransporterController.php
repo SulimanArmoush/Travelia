@@ -14,9 +14,6 @@ class TransporterController extends Controller
 
     use facilityCreateTrait, PhotoTrait;
 
-
-
-
     public function createTransportation(Request $request)
     {
         $transporter = auth()->user()->facility->transporter;
