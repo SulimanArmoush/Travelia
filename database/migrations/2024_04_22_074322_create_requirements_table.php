@@ -14,14 +14,12 @@ return new class extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('facility_id');
+            $table->unsignedBigInteger('note');
             $table->set('status', ['onHold', 'accept', 'reject'])->default('onHold');
             $table->timestamps();
 
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('facility_id')->references('id')->on('facilities')->onDelete('cascade');
-
         });
     }
 

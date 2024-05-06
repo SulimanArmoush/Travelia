@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('imgs')->nullable();
             $table->unsignedBigInteger('city_id');
+            $table->boolean('isTourist');
             $table->timestamps();
 
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');

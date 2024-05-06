@@ -58,12 +58,7 @@ class Facility extends Model
     public function transporter() { 
         return $this->hasOne(Transporter::class); 
     } 
-
-    public function recuirement() { 
-        return $this->hasOne(Requirement::class); 
-    }
-
-    
+  
 }
 
 

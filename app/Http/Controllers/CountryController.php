@@ -68,6 +68,7 @@ class CountryController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'imgs' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
             'city_id' => ['required', 'integer'],
+            'isTourist'=>['required', 'boolean'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -79,12 +80,14 @@ class CountryController extends Controller
                 'name' => $request->name,
                 'imgs' => $image,
                 'city_id' => $request->city_id,
+                'isTourist'=>$request->isTourist,
             ]);
             return response()->json(['image' => $image, 'message' => 'Your Area created successfully'], 200);
         }
         Area::create([
             'name' => $request->name,
             'city_id' => $request->city_id,
+            'isTourist'=>$request->isTourist,
         ]);
         return response()->json(['message' => 'Your Area created successfully'], 200);
     }
