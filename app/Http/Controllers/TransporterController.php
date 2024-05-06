@@ -42,7 +42,17 @@ class TransporterController extends Controller
 
     public function getTransportation($transporter_id)
     {
-        $transportations = Transportation::Where('transporter_id', '=', $transporter_id)->paginate(10);
+        $transportations = Transportation::Where('transporter_id', '=', $transporter_id)
+            ->paginate(10);
+        return response()->json(['transportations' => $transportations], 200);
+    }
+
+    public function getAvailableTransportation($transporter_id)
+    {
+        $transportations = Transportation::
+              Where('transporter_id', $transporter_id)
+            ->where('status','available')
+            ->paginate(10);
         return response()->json(['transportations' => $transportations], 200);
     }
 
