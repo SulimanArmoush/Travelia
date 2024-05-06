@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Area extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','imgs','city_id'] ;
+    protected $fillable = ['name','imgs','city_id','isTourist'] ;
 
 
     public function city()

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TheWorld\Facilities\Requirement;
 use Illuminate\Http\Request;
 use App\Models\Permissions\Role;
 use App\Models\Permissions\User;
@@ -19,12 +20,12 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = validator::make($request->all(), [
-            'firstName'=> ['required', 'string', 'max:255'],
-            'lastName'=> ['required', 'string', 'max:255'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', ValidationRule::unique(table: 'users')],
-            'password'=> ['required', 'string', 'min:8'],
-            'photo' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
-            'role_id'=>'required',
+            'password' => ['required', 'string', 'min:8'],
+            'photo' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'role_id' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -36,11 +37,18 @@ class AuthController extends Controller
         $user = User::query()->create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
-            'email' => $request->email ,
-            'password' => $request->password ,
+            'email' => $request->email,
+            'password' => $request->password,
             'photo' => $photoPath,
             'role_id' => $request->role_id,
         ]);
+
+        if (in_array($request->role_id, [2, 3, 4, 5])) {
+            Requirement::create([
+                'user_id' => Auth::id(),
+                'Note' => 'Approve or reject the account',
+            ]);
+        }
 
         $tokenResult = $user->createToken('personal Access Token');
 
@@ -48,13 +56,13 @@ class AuthController extends Controller
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
 
-        return response()->json(['data'=>$data, 'status' => 200, 'message' => 'signed up successfully']);
+        return response()->json(['data' => $data, 'status' => 200, 'message' => 'signed up successfully']);
     }
 
     public function login(Request $request)
     {
         $validator = validator::make($request->all(), [
-            'email' => ['required', 'email','string', 'max:255'],
+            'email' => ['required', 'email', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
@@ -62,7 +70,7 @@ class AuthController extends Controller
             return response()->json($validator->errors()->all(), status: 422);
         }
 
-        if (! Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['error' => 'Account or password is not correct'], 401);
         }
 
@@ -78,7 +86,7 @@ class AuthController extends Controller
         $data['access_token'] = $tokenResult->accessToken;
         $data['role'] = $role;
 
-        return response()->json(['data'=> $data, 'status' => 200, 'message' => 'logedd In successfully']);
+        return response()->json(['data' => $data, 'status' => 200, 'message' => 'logedd In successfully']);
     }
 
     public function logout(Request $request)
@@ -88,28 +96,30 @@ class AuthController extends Controller
         return response()->json(['message' => 'logged out ', 'status' => 200]);
     }
 
-    public function profile(Request $request){
+    public function profile(Request $request)
+    {
 
         $validator = validator::make($request->all(), [
-        'phone' => ['string', 'max:10', 'min:10', 'regex:/^09[0-9]{8}/', ValidationRule::unique(table: 'users')], //syrian number
-        'age' => ['integer'],
-        'address'=> ['string','max:255'], 
+            'phone' => ['string', 'max:10', 'min:10', 'regex:/^09[0-9]{8}/', ValidationRule::unique(table: 'users')], //syrian number
+            'age' => ['integer'],
+            'address' => ['string', 'max:255'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
         User::find(Auth::id())->update([
-            'phone'=> $request->phone,
-            'address'=> $request->address,
-            'age'=> $request->age,
-        ]) ;
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'age' => $request->age,
+        ]);
         return response()->json(['message' => 'Your profile updated successfully']);
     }
 
-    public function photo(Request $request){
+    public function photo(Request $request)
+    {
 
         $validator = validator::make($request->all(), [
-        'photo' => ['required','image','mimes:jpeg,png,jpg,gif','max:512'], 
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -119,15 +129,16 @@ class AuthController extends Controller
 
         User::find(Auth::id())->update([
             'photo' => $photoPath,
-        ]) ;
+        ]);
 
-        return response()->json(['photoPath'=>$photoPath,'message' => 'Your photo added successfully']);
+        return response()->json(['photoPath' => $photoPath, 'message' => 'Your photo added successfully']);
     }
 
-    public function passport(Request $request){
+    public function passport(Request $request)
+    {
 
         $validator = validator::make($request->all(), [
-        'passport' => ['required','image','mimes:jpeg,png,jpg,gif','max:512'], 
+            'passport' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -137,11 +148,11 @@ class AuthController extends Controller
 
         User::find(Auth::id())->update([
             'passport' => $passportPath,
-        ]) ;
+        ]);
 
-        return response()->json(['passportPath'=>$passportPath,'message' => 'Your passport added successfully']);
+        return response()->json(['passportPath' => $passportPath, 'message' => 'Your passport added successfully']);
     }
-    
+
 }
 
 

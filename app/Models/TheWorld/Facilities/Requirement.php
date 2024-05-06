@@ -9,13 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Requirement extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','facility_id','status'] ;
-
-
-    public function facility()
-    {
-        return $this->belongsTo(Facility::class);
-    }
+    protected $fillable = ['user_id','note','status'] ;
 
     public function user()
     {

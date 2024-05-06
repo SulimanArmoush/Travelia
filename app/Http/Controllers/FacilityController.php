@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 class FacilityController extends Controller
 {
     use facilityCreateTrait, PhotoTrait;
- 
+
     public function createAccount(Request $request)
     {
         $validator = validator::make($request->all(), [
@@ -26,13 +26,16 @@ class FacilityController extends Controller
             'description' => ['required', 'string', 'max:255'],
             'latitude' => ['required', 'string'],
             'longitude' => ['required', 'string'],
-            'area_id' => ['required', 'integer'],
+            'area' => ['required', 'string'],
             'type' => ['required', 'string'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        $location = $this->createLocation($request->latitude, $request->longitude, $request->area_id);
+        $location = $this->createLocation($request->latitude, $request->longitude, $request->area);
+        if ($location === null) {
+            return response()->json(['error' => 'Failed to create location. Area not found.'], 400);
+        }
         $facility = $this->createFacility($request->name, $request->description, $location, Auth::id());
 
         $roles = [
@@ -49,36 +52,38 @@ class FacilityController extends Controller
             ]);
         }
 
-        Requirement::create([
-            'user_id' => Auth::id(),
-            'facility_id' => $facility,
-        ]);
-
         return response()->json(['message' => 'Your Account created successfully'], 200);
     }
- 
- 
+
+
+
     public function imgUpload(Request $request)
     {
-        
-    if (!$request->hasFile('imgs')) {return response()->json(['error' => 'No images provided'], 400);}
+
+        if (!$request->hasFile('imgs')) {
+            return response()->json(['error' => 'No images provided'], 400);
+        }
 
         $validator = validator::make($request->all(), [
-            'imgs'=>['min:1','max:3'],
-            'imgs.*' => ['image','mimes:jpeg,png,jpg,gif','max:512'], 
+            'imgs' => ['min:1', 'max:3'],
+            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
-        if ($validator->fails()) {return response()->json($validator->errors()->all(), status: 400);}
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all(), status: 400);
+        }
 
         $facility = Facility::find(auth()->user()->facility()->first()->id);
-        if (!$facility) {return response()->json(['error' => 'Facility not found'], 404);}
+        if (!$facility) {
+            return response()->json(['error' => 'Facility not found'], 404);
+        }
 
 
         $images = $this->upload($request->imgs);
-        
+
         $facility->update([
-            'imgs'=> $images,
+            'imgs' => $images,
         ]);
-         
-        return response()->json(['imgs'=> $images,'message' => 'Your images Added successfully'], 200);
+
+        return response()->json(['imgs' => $images, 'message' => 'Your images Added successfully'], 200);
     }
 }

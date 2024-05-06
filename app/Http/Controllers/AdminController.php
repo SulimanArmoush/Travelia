@@ -66,8 +66,6 @@ class AdminController extends Controller
         }
 
         if ($request->status == 'reject') {
-            $facility = Facility::find($requirement->facility_id);
-            Location::find($facility->location_id)->delete();
             User::find($requirement->user_id)->delete();
 
             return response()->json(['message' => "You have deleted this account"], 200);
