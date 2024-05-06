@@ -53,7 +53,7 @@ class AdminController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        $requirement = Requirement::find($requiermemt_id);
+        $requirement = Requirement::find($requiermemt_id)->first();
         $user = User::find($requirement->user_id)->first();
         $requirement->update([
             'status' => $request->status,
