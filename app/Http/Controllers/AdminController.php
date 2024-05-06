@@ -54,20 +54,16 @@ class AdminController extends Controller
         }
 
         $requirement = Requirement::find($requiermemt_id);
+        $user = User::find($requirement->user_id)->first();
         $requirement->update([
             'status' => $request->status,
         ]);
-
         if ($request->status == 'accept') {
-            User::find($requirement->user_id)->update([
-                'confirmation' => '1'
-            ]);
+            $user->update(['confirmation' => '1']);
             return response()->json(['message' => "You have accepted this account"], 200);
         }
-
         if ($request->status == 'reject') {
-            User::find($requirement->user_id)->delete();
-
+            $user->delete();
             return response()->json(['message' => "You have deleted this account"], 200);
         }
     }
