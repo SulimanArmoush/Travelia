@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('bedNum');
             $table->double('cost');
             $table->String('type');
-            $table->string('status');
+            $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 
             $table->foreign('hotel_id')->references('id')->on('hotels')->onDelete('cascade');

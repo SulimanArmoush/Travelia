@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('chairNum');
             $table->double('cost');
             $table->String('type');
-            $table->string('status');
+            $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
