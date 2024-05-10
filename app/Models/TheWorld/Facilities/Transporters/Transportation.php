@@ -11,9 +11,9 @@ class Transportation extends Model
     protected $fillable = ['transporter_id','totalCapacity','cost','type','status'] ;
 
     public static $airTypes = ['normalPlane','businessClassPlane'];
-    public static $landTypes = ['Pullman','Bus' ,'Van' , 'privateCar'];
-    
-    
+    public static $landTypes = ['Pullman','Bus' ,'Van'];
+
+
     public function transporterReservations()
     {
         return $this->hasMany(TransporterReservation::class);
