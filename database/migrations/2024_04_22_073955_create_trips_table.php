@@ -17,12 +17,11 @@ return new class extends Migration
             $table->string('status');
             $table->double('cost');
             $table->string('imgs');
+            $table->dateTime('dateTime');
             $table->integer('totalCapacity');
-            $table->unsignedBigInteger('date_id');
             $table->timestamps();
 
             $table->foreign('organizer_id')->references('id')->on('organizers')->onDelete('cascade');
-            $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
         });
     }
 

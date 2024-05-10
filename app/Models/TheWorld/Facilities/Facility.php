@@ -21,13 +21,7 @@ class Facility extends Model
         'imgs',
         'location_id',
         'user_id',
-        'date_id',
     ] ;
-
-    public function area()
-    {
-        return $this->belongsTo(Area::class ,'locatiion_id');
-    }
 
     public function user()
     {
@@ -39,26 +33,21 @@ class Facility extends Model
         return $this->belongsTo(Location::class);
     }
 
-    public function date()
-    {
-        return $this->hasOne(Date::class);
+    public function hotel() {
+        return $this->hasOne(Hotel::class);
+    }
+    public function restaurant() {
+        return $this->hasOne(Restaurant::class);
     }
 
-    public function hotel() { 
-        return $this->hasOne(Hotel::class); 
-    } 
-    public function restaurant() { 
-        return $this->hasOne(Restaurant::class); 
-    } 
+    public function organizer() {
+        return $this->hasOne(Organizer::class);
+    }
 
-    public function organizer() { 
-        return $this->hasOne(Organizer::class); 
-    } 
+    public function transporter() {
+        return $this->hasOne(Transporter::class);
+    }
 
-    public function transporter() { 
-        return $this->hasOne(Transporter::class); 
-    } 
-  
 }
 
 

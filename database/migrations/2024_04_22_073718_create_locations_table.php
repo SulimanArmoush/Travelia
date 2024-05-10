@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('latitude');
             $table->string('longitude');
-            $table->unsignedBigInteger('area_id');
-
-            $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
+            $table->string('address');
+            $table->string('country');
+            $table->string('state');
+            $table->string('country_code');
             $table->timestamps();
         });
     }

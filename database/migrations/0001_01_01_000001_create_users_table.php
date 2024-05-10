@@ -16,15 +16,18 @@ return new class extends Migration
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();
-            $table->string('phone')->unique()->nullable();
             $table->string('password');
+            $table->string('phone')->unique()->nullable();
             $table->integer('age')->nullable();
             $table->string('address')->nullable();
-            $table->double('wallet')->default(0.0);
-            $table->boolean('confirmation')->default('0');
             $table->string('photo')->nullable();
             $table->string('passport')->nullable();
             $table->unsignedBigInteger('role_id');
+            $table->double('wallet')->default(0.0);
+            $table->set('confirmation', [0,1,2])->default(0);
+
+
+
             $table->rememberToken();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
