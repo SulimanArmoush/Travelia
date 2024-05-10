@@ -2,9 +2,9 @@
 
 namespace App\Models\TheWorld\Facilities;
 
+use App\Models\TheWorld\TouristArea;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\TheWorld\Area;
 
 class Location extends Model
 {
@@ -23,6 +23,11 @@ class Location extends Model
     public function facility()
     {
         return $this->hasOne(Facility::class);
+    }
+
+    public function touristArea()
+    {
+        return $this->hasOne(TouristArea::class);
     }
 
 }
