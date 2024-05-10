@@ -10,7 +10,7 @@ use App\Models\Dates\Date;
 class TransporterReservation extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'transportation_id', 'placeNum', 'date_id'];
+    protected $fillable = ['user_id', 'transportation_id', 'placeNum', 'dateTime'];
 
 
     public function user()

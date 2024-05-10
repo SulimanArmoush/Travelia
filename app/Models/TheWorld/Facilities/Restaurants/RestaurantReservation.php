@@ -10,7 +10,7 @@ use App\Models\Dates\Date;
 class RestaurantReservation extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','table_id','date_id'] ;
+    protected $fillable = ['user_id','table_id','dateTime'] ;
 
 
     public function user()

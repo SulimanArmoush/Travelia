@@ -10,7 +10,7 @@ use App\Models\Dates\Date;
 class HotelReservation extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id','room_id','date_id'] ;
+    protected $fillable = ['user_id','room_id','dateTime'] ;
 
     public function user()
     {

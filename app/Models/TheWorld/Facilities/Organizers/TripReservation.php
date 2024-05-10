@@ -13,7 +13,7 @@ class TripReservation extends Model
     'user_id',
     'trip_id',
     'placeNum',
-    'date_id',
+    'dateTime',
     ];
 
 
