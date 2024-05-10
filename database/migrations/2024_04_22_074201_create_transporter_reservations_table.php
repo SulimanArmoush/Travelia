@@ -16,12 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('transportation_id');
             $table->integer('placeNum');
-            $table->unsignedBigInteger('date_id');
+            $table->dateTime('dateTime');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('transportation_id')->references('id')->on('transportations')->onDelete('cascade');
-            $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
 
         });
     }

@@ -38,7 +38,7 @@ class DataSeeder extends Seeder
                 'role_id' => '1',
             ]
         ];
-
+/*
         $months = [
             ['name' => 'JANUARY'],
             ['name' => 'FEBRUARY'],
@@ -89,13 +89,13 @@ class DataSeeder extends Seeder
             ['name' => '22'],
             ['name' => '23'],
             ['name' => '00'],
-        ];
+        ];*/
 
         Role::insert($roles);
         User::insert($the_Admin);
-        Month::insert($months);
+       /* Month::insert($months);
         Day::insert($days);
-        Hour::insert($hours);
+        Hour::insert($hours);*/
 
     }
 }
