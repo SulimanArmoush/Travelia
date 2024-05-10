@@ -2,36 +2,37 @@
 
 namespace App\Traits;
 
-use App\Models\TheWorld\Area;
 use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\Facilities\Location;
 
 trait facilityCreateTrait
 {
 
-    public function createLocation($latitude, $longitude, $area)
+    public function createLocation($latitude, $longitude, $address,$country,$state,$country_code)
     {
-        $Area = Area::where('name', '=', $area)->first();
-        if ($Area) {
             $location = Location::create([
                 'latitude' => $latitude,
                 'longitude' => $longitude,
-                'area_id' => $Area->id,
+                'address' => $address,
+                'country'=> $country,
+                'state'=> $state,
+                'country_code'=> $country_code
             ]);
-            return $location->id;
-        }
-        return null;
+            return $location;
     }
 
 
-    public function createFacility($name, $description, $location_id, $user_id)
+    public function createFacility($name, $description, $location_id, $user_id ,$imgs)
     {
+        $images = $this->upload($imgs);
+
         $facility = Facility::create([
             'name' => $name,
             'description' => $description,
             'location_id' => $location_id,
             'user_id' => $user_id,
+            'imgs' => $images
         ]);
-        return $facility->id;
+        return $facility;
     }
 }

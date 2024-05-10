@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\TheWorld\Facilities\Requirement;
-use Illuminate\Http\Request;
 use App\Models\Permissions\Role;
 use App\Models\Permissions\User;
+use App\Traits\PhotoTrait;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule as ValidationRule;
-use App\Traits\PhotoTrait;
 
 class AuthController extends Controller
 {

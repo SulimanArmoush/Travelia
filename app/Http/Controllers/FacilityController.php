@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\TheWorld\Facilities\Hotels\Hotel;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
-use App\Models\TheWorld\Facilities\Requirement;
 use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
-
-use Illuminate\Support\Facades\Auth;
+use App\Models\TheWorld\Facilities\Facility;
 use App\Traits\facilityCreateTrait;
 use App\Traits\PhotoTrait;
-use Illuminate\Http\Request;
-use App\Models\TheWorld\Facilities\Facility;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class FacilityController extends Controller
 {
@@ -24,19 +22,35 @@ class FacilityController extends Controller
         $validator = validator::make($request->all(), [
             'name' => ['required', 'string', 'max:25'],
             'description' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string'],
             'latitude' => ['required', 'string'],
             'longitude' => ['required', 'string'],
-            'area' => ['required', 'string'],
-            'type' => ['required', 'string'],
+            'address' => ['required', 'string'],
+            'country' => ['required', 'string'],
+            'state' => ['required', 'string'],
+            'country_code' => ['required', 'string'],
+            'imgs' => ['min:1', 'max:3'],
+            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        $location = $this->createLocation($request->latitude, $request->longitude, $request->area);
-        if ($location === null) {
-            return response()->json(['error' => 'Failed to create location. Area not found.'], 400);
-        }
-        $facility = $this->createFacility($request->name, $request->description, $location, Auth::id());
+        $location = $this->createLocation(
+            $request->latitude,
+            $request->longitude,
+            $request->address,
+            $request->country,
+            $request->state,
+            $request->country_code
+        );
+
+        $facility = $this->createFacility(
+            $request->name,
+            $request->description,
+            $location->id,
+            Auth::id(),
+            $request->imgs
+        );
 
         $roles = [
             2 => Organizer::class,
@@ -47,14 +61,13 @@ class FacilityController extends Controller
 
         if (array_key_exists(auth()->user()->role_id, $roles)) {
             $roles[auth()->user()->role_id]::create([
-                'facility_id' => $facility,
+                'facility_id' => $facility->id,
                 'type' => $request->type,
             ]);
         }
 
         return response()->json(['message' => 'Your Account created successfully'], 200);
     }
-
 
 
     public function imgUpload(Request $request)

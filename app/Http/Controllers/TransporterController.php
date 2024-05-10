@@ -35,6 +35,14 @@ class TransporterController extends Controller
         return response()->json(['message' => 'Your Transportation created successfully'], 200);
     }
 
+    public function createTransportationss(Request $request)
+    {
+        $transporter = auth()->user()->facility->transporter;
+        $types = $transporter->type == 'air' ? Transportation::$airTypes : Transportation::$landTypes;
+
+
+    }
+
     public function getTransportation($transportation_id)
     {
         $transportation = Transportation::find($transportation_id);

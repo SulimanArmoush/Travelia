@@ -18,12 +18,10 @@ return new class extends Migration
             $table->string('imgs')->nullable();
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('date_id')->nullable();
             $table->timestamps();
 
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('date_id')->references('id')->on('dates')->onDelete('cascade');
         });
     }
 //$table->set('status', ['Preparation', 'Sent', 'Received'])->default('Preparation');

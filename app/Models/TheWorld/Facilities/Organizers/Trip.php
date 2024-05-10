@@ -10,7 +10,7 @@ use App\Models\Dates\Date;
 class Trip extends Model
 {
     use HasFactory;
-    protected $fillable = ['organizer_id','status','cost','imgs','totalCapacity','date_id'] ;
+    protected $fillable = ['organizer_id','status','cost','imgs','totalCapacity','dateTime'] ;
 
 
     public function tripReservations()
@@ -23,8 +23,4 @@ class Trip extends Model
         return $this->belongsTo(Organizer::class);
     }
 
-    public function date()
-    {
-        return $this->hasOne(Date::class);
-    }
 }

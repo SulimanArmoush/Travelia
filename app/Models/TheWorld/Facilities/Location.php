@@ -13,18 +13,16 @@ class Location extends Model
     protected $fillable = [
         'latitude',
         'longitude',
-        'area_id',
-    ];
-
+        'address',
+        'country',
+        'state',
+        'country_code'
+        ];
 
 
     public function facility()
     {
         return $this->hasOne(Facility::class);
-    }
-    public function area()
-    {
-        return $this->belongsTo(Area::class);
     }
 
 }
