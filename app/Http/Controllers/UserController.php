@@ -24,13 +24,13 @@ class UserController extends Controller
         return response()->json($user, 200);
     }
 
-    public function getAllUser()
+    public function getAllUsers()
     {
         $users = User::paginate(10);
         return response()->json(['users' => $users], 200);
     }
 
-    public function getAllOrganizer()
+    public function getAllOrganizers()
     {
         $users = User::where('role_id', '=', '2')->with('facility.organizer')
             ->paginate(10);
@@ -38,7 +38,7 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    public function getAllHotelManager()
+    public function getAllHotelManagers()
     {
         $users = User::where('role_id', '=', '3')->with('facility.hotel')
             ->paginate(10);
@@ -46,7 +46,7 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    public function getAllRestaurantManager()
+    public function getAllRestaurantManagers()
     {
         $users = User::where('role_id', '=', '4')->with('facility.restaurant')
             ->paginate(10);
@@ -54,7 +54,7 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    public function getAllTransporter()
+    public function getAllTransporters()
     {
         $users = User::where('role_id', '=', '5')->with('facility.transporter')
             ->paginate(10);
@@ -62,7 +62,7 @@ class UserController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    public function getAllTourist()
+    public function getAllTourists()
     {
         $users = User::where('role_id', '=', '6')
             ->paginate(10);

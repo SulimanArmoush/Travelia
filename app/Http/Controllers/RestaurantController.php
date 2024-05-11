@@ -57,9 +57,9 @@ class RestaurantController extends Controller
         return response()->json(['message' => 'Your Tables created successfully'], 200);
     }
 
-    public function getTable($Table_id)
+    public function getTable($table_id)
     {
-        $table = Table::find($Table_id);
+        $table = Table::find($table_id);
         return response()->json(['table' => $table], 200);
     }
 
