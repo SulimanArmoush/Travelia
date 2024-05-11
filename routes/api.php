@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -59,5 +60,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getAllRestaurantManagers', 'getAllRestaurantManagers')->name('getAllRestaurantManagers');
         Route::Get('getAllTransporters', 'getAllTransporters')->name('getAllTransporters');
         Route::Get('getAllTourists', 'getAllTourists')->name('getAllTourists');
+    });
+    Route::controller(OrganizerController::class)->group(function () {
+        Route::Get('createTrip/{touristArea_id}', 'createTrip')->name('createTrip');
     });
 });
