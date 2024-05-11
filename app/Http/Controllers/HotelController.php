@@ -13,22 +13,43 @@ class HotelController extends Controller
         $hotel = auth()->user()->facility->hotel;
 
         $validator = validator::make($request->all(), [
-            'bedNum' => ['required', 'integer'],
-            'cost' => ['required', 'numeric'],
-            'type' => ['required', 'integer'],
-            'number' => ['required', 'integer'],
+            'num1' => ['integer'],
+            'cost1' => ['numeric'],
+            'num2' => ['integer'],
+            'cost2' => ['numeric'],
+            'num3' => ['integer'],
+            'cost3' => ['numeric'],
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        for ($i = 0; $i < $request->number; $i++) {
-            Room::create([
-                'hotel_id' => $hotel->id,
-                'bedNum' => $request->totalCapacity,
-                'cost' => $request->cost,
-                'type' => $request->type,
-            ]);
+        if ($request->num1) {
+            for ($i = 0; $i < $request->num1; $i++) {
+                Room::create([
+                    'hotel_id' => $hotel->id,
+                    'cost' => $request->cost1,
+                    'type' => 'room for one person',
+                ]);
+            }
+        }
+        if ($request->num2) {
+            for ($i = 0; $i < $request->num2; $i++) {
+                Room::create([
+                    'hotel_id' => $hotel->id,
+                    'cost' => $request->cost2,
+                    'type' => 'room for two person',
+                ]);
+            }
+        }
+        if ($request->num3) {
+            for ($i = 0; $i < $request->num3; $i++) {
+                Room::create([
+                    'hotel_id' => $hotel->id,
+                    'cost' => $request->cost3,
+                    'type' => 'suite',
+                ]);
+            }
         }
         return response()->json(['message' => 'Your Rooms created successfully'], 200);
     }

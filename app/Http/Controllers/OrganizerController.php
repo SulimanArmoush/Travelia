@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TheWorld\Facilities\Organizers\Trip;
-use App\Traits\facilityCreateTrait;
+use App\Traits\FacilityCreateTrait;
 use App\Traits\PhotoTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('imgs')->nullable();
+            $table->String('type');
             $table->unsignedBigInteger('location_id');
             $table->timestamps();
 
