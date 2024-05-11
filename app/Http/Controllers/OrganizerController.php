@@ -9,16 +9,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class OrganizerController extends Controller
-{/*
+{
     use facilityCreateTrait, PhotoTrait;
 
-    public function createTrip(Request $request)
+    public function createTrip(Request $request, $touristArea_id)
     {
         $organizer = auth()->user()->facility->organizer;
 
         $validator = validator::make($request->all(), [
-            'totalCapacity' => ['required', 'integer'],
             'cost' => ['required', 'numeric'],
+            'dateTime' => ['required', 'date'],
+            'totalCapacity' => ['required', 'integer'],
+            'latitude' => ['required', 'string'],
+            'longitude' => ['required', 'string'],
+            'address' => ['required', 'string'],
+            'country' => ['required', 'string'],
+            'state' => ['required', 'string'],
+            'country_code' => ['required', 'string'],
             'imgs' => ['min:1', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
@@ -29,13 +36,25 @@ class OrganizerController extends Controller
 
         $images = $this->upload($request->imgs);
 
+        $location = $this->createLocation(
+            $request->latitude,
+            $request->longitude,
+            $request->address,
+            $request->country,
+            $request->state,
+            $request->country_code
+        );
+
         Trip::create([
-                'organizer_id' => $organizer->id,
-                'totalCapacity' => $request->totalCapacity,
-                'cost' => $request->cost,
-                'imgs' => $images,
+            'organizer_id' => $organizer->id,
+            'cost' => $request->cost,
+            'dateTime' => $request->dateTime,
+            'totalCapacity' => $request->totalCapacity,
+            'imgs' => $images,
+            'location_id' => $location->id,
+            'touristArea' => $touristArea_id,
         ]);
 
         return response()->json(['message' => 'Your Trip created successfully'], 200);
-    }*/
+    }
 }

@@ -10,7 +10,17 @@ use App\Models\Dates\Date;
 class Trip extends Model
 {
     use HasFactory;
-    protected $fillable = ['organizer_id','status','cost','imgs','totalCapacity','dateTime'] ;
+
+    protected $fillable = [
+        'organizer_id',
+        'cost',
+        'dateTime',
+        'totalCapacity',
+        'imgs',
+        'location_id',
+        'touristArea',
+        'status',
+    ];
 
 
     public function tripReservations()
