@@ -5,7 +5,7 @@ namespace App\Traits;
 use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\Facilities\Location;
 
-trait facilityCreateTrait
+trait FacilityCreateTrait
 {
 
     public function createLocation($latitude, $longitude, $address,$country,$state,$country_code)

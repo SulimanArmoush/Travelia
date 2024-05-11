@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TheWorld\Facilities\Hotels\Room;
 use App\Models\TheWorld\Facilities\Restaurants\Table;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,22 +15,44 @@ class RestaurantController extends Controller
         $restaurant = auth()->user()->facility->restaurant;
 
         $validator = validator::make($request->all(), [
-            'chairNum' => ['required', 'integer'],
-            'cost' => ['required', 'numeric'],
-            'type' => ['required', 'integer'],
-            'number' => ['required', 'integer'],
+            'num1' => ['integer'],
+            'cost1' => ['numeric'],
+            'num2' => ['integer'],
+            'cost2' => ['numeric'],
+            'num3' => ['integer'],
+            'cost3' => ['numeric'],
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        for ($i = 0; $i < $request->number; $i++) {
-            Table::create([
-                'restaurant_id' => $restaurant->id,
-                'chairNum' => $request->totalCapacity,
-                'cost' => $request->cost,
-                'type' => $request->type,
-            ]);
+
+        if ($request->num1) {
+            for ($i = 0; $i < $request->num1; $i++) {
+                Room::create([
+                    'restaurant_id' => $restaurant->id,
+                    'cost' => $request->cost1,
+                    'type' => 'table with two chairs',
+                ]);
+            }
+        }
+        if ($request->num2) {
+            for ($i = 0; $i < $request->num2; $i++) {
+                Room::create([
+                    'restaurant_id' => $restaurant->id,
+                    'cost' => $request->cost2,
+                    'type' => 'table with four chairs',
+                ]);
+            }
+        }
+        if ($request->num3) {
+            for ($i = 0; $i < $request->num3; $i++) {
+                Room::create([
+                    'restaurant_id' => $restaurant->id,
+                    'cost' => $request->cost3,
+                    'type' => 'table with more than 4 chairs',
+                ]);
+            }
         }
         return response()->json(['message' => 'Your Tables created successfully'], 200);
     }

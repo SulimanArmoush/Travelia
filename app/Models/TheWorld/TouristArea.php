@@ -15,6 +15,7 @@ class TouristArea extends Model
         'description',
         'imgs',
         'location_id',
+        'type'
     ] ;
 
     public function location()

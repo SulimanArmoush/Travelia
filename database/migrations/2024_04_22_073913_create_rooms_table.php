@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('hotel_id');
-            $table->string('bedNum');
             $table->double('cost');
-            $table->String('type');
+            $table->set('type', ['room for one person','room for two person','suite']);
             $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 

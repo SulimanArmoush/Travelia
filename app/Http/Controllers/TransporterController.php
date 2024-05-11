@@ -12,35 +12,63 @@ class TransporterController extends Controller
     public function createTransportations(Request $request)
     {
         $transporter = auth()->user()->facility->transporter;
-        $types = $transporter->type == 'air' ? Transportation::$airTypes : Transportation::$landTypes;
 
         $validator = validator::make($request->all(), [
-            'totalCapacity' => ['required', 'integer'],
-            'cost' => ['required', 'numeric'],
-            'type' => ['required', Rule::in($types)],
-            'number' => ['required', 'integer'],
-
+            'num1' => ['integer'],
+            'totalCapacity1' => ['integer'],
+            'cost1' => ['numeric'],
+            'num2' => ['integer'],
+            'totalCapacity2' => ['integer'],
+            'cost2' => ['numeric'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        for ($i = 0; $i < $request->number; $i++) {
-            Transportation::create([
-                'transporter_id' => $transporter->id,
-                'totalCapacity' => $request->totalCapacity,
-                'cost' => $request->cost,
-                'type' => $request->type,
-            ]);
+        if ($transporter->type == 'air') {
+            if ($request->num1) {
+                for ($i = 0; $i < $request->num1; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity1,
+                        'cost' => $request->cost1,
+                        'type' => 'normalPlane',
+                    ]);
+                }
+            }
+            if ($request->num2) {
+                for ($i = 0; $i < $request->num2; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity2,
+                        'cost' => $request->cost2,
+                        'type' => 'businessClassPlane',
+                    ]);
+                }
+            }
+        }
+        if ($transporter->type == 'land') {
+            if ($request->num1) {
+                for ($i = 0; $i < $request->num1; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity1,
+                        'cost' => $request->cost1,
+                        'type' => 'pullman',
+                    ]);
+                }
+            }
+            if ($request->num2) {
+                for ($i = 0; $i < $request->num2; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity2,
+                        'cost' => $request->cost2,
+                        'type' => 'van',
+                    ]);
+                }
+            }
         }
         return response()->json(['message' => 'Your Transportation created successfully'], 200);
-    }
-
-    public function createTransportationss(Request $request)
-    {
-        $transporter = auth()->user()->facility->transporter;
-        $types = $transporter->type == 'air' ? Transportation::$airTypes : Transportation::$landTypes;
-
-
     }
 
     public function getTransportation($transportation_id)

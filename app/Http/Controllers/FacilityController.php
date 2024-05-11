@@ -7,7 +7,7 @@ use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
 use App\Models\TheWorld\Facilities\Facility;
-use App\Traits\facilityCreateTrait;
+use App\Traits\FacilityCreateTrait;
 use App\Traits\PhotoTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class FacilityController extends Controller
 {
-    use facilityCreateTrait, PhotoTrait;
+    use FacilityCreateTrait, PhotoTrait;
 
     public function createAccount(Request $request)
     {

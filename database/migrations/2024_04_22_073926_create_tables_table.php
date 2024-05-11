@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('restaurant_id');
-            $table->string('chairNum');
             $table->double('cost');
-            $table->String('type');
+            $table->set('type', ['table with two chairs','table with four chairs','table with more than 4 chairs']);
             $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 
