@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TheWorld\Facilities\Hotels\Room;
 use App\Models\TheWorld\Facilities\Restaurants\Table;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -29,7 +28,7 @@ class RestaurantController extends Controller
 
         if ($request->num1) {
             for ($i = 0; $i < $request->num1; $i++) {
-                Room::create([
+                Table::create([
                     'restaurant_id' => $restaurant->id,
                     'cost' => $request->cost1,
                     'type' => 'table with two chairs',
@@ -38,7 +37,7 @@ class RestaurantController extends Controller
         }
         if ($request->num2) {
             for ($i = 0; $i < $request->num2; $i++) {
-                Room::create([
+                Table::create([
                     'restaurant_id' => $restaurant->id,
                     'cost' => $request->cost2,
                     'type' => 'table with four chairs',
@@ -47,7 +46,7 @@ class RestaurantController extends Controller
         }
         if ($request->num3) {
             for ($i = 0; $i < $request->num3; $i++) {
-                Room::create([
+                Table::create([
                     'restaurant_id' => $restaurant->id,
                     'cost' => $request->cost3,
                     'type' => 'table with more than 4 chairs',

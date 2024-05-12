@@ -58,7 +58,7 @@ class AdminController extends Controller
             'status' => $request->status,
         ]);
         if ($request->status == 'accept') {
-            $user->update(['confirmation' => 1]);
+            $user->update(['confirmation' => '1']);
             return response()->json(['message' => "You have accepted this account"], 200);
         }
         if ($request->status == 'reject') {

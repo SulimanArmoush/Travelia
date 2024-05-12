@@ -59,10 +59,10 @@ class OrganizerController extends Controller
             'totalCapacity'=>$request->totalCapacity,
             'imgs' => $images,
             'strLocation'=>$location->id,
-            'touristArea'=>$request->touristArea_id,
-            'hotel'=>$request->hotel_id,
-            'restaurant'=>$request->restaurant_id,
-            'transporter'=>$request->transporter_id,
+            'touristArea'=>$request->touristArea,
+            'hotel'=>$request->hotel,
+            'restaurant'=>$request->restaurant,
+            'transporter'=>$request->transporter,
         ]);
 
         return response()->json(['message' => 'Your Trip created successfully'], 200);

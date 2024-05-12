@@ -26,16 +26,18 @@ class DataSeeder extends Seeder
         $the_Admin = [
             [
                 'firstName' => 'Kinan',
-                'lastName' => 'Hawari',
+                'lastName' => 'Hawri',
                 'email' => 'kinan@gmail.com',
                 'phone' => '0957965126',
                 'password' => bcrypt('12345678'),
                 'age' => '23',
                 'address' => 'Damas\Midan',
-                'wallet' => '999999.999999',
+                'wallet' => '0',
                 'photo' => 'images/My_photo.jpg',
                 'passport' => 'images/passport_image.jpg',
                 'role_id' => '1',
+                'created_at'=>now(),
+                'updated_at'=>now(),
             ]
         ];
 /*

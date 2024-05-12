@@ -44,14 +44,16 @@ class AuthController extends Controller
 
         if (in_array($request->role_id, [2, 3, 4, 5])) {
             Requirement::create([
-                'user_id' => Auth::id(),
-                'Note' => 'Approve or reject the account',
+                'user_id' => $user->id,
+                'note' => 'Approve or reject the account',
             ]);
         }
 
         $tokenResult = $user->createToken('personal Access Token');
 
-        $data['user'] = $user;
+        $u = User::find($user->id);
+
+        $data['user'] = $u;
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
 
@@ -110,13 +112,14 @@ class AuthController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'age' => $request->age,
+            'confirmation'=>'2'
         ]);
+
         return response()->json(['message' => 'Your profile updated successfully']);
     }
 
     public function photo(Request $request)
     {
-
         $validator = validator::make($request->all(), [
             'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);

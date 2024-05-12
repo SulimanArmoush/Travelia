@@ -97,6 +97,6 @@ class FacilityController extends Controller
             'imgs' => $images,
         ]);
 
-        return response()->json(['imgs' => $images, 'message' => 'Your images Added successfully'], 200);
+        return response()->json(['imgs' => json_decode($images), 'message' => 'Your images Added successfully'], 200);
     }
 }

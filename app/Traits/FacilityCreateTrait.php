@@ -16,7 +16,7 @@ trait FacilityCreateTrait
                 'address' => $address,
                 'country'=> $country,
                 'state'=> $state,
-                'country_code'=> $city
+                'city'=> $city
             ]);
             return $location;
     }
