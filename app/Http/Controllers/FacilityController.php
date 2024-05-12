@@ -28,8 +28,8 @@ class FacilityController extends Controller
             'address' => ['required', 'string'],
             'country' => ['required', 'string'],
             'state' => ['required', 'string'],
-            'country_code' => ['required', 'string'],
-            'imgs' => ['min:1', 'max:3'],
+            'city' => ['required', 'string'],
+            'imgs' => ['min:3', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
@@ -41,7 +41,7 @@ class FacilityController extends Controller
             $request->address,
             $request->country,
             $request->state,
-            $request->country_code
+            $request->city
         );
 
         $facility = $this->createFacility(
@@ -78,7 +78,7 @@ class FacilityController extends Controller
         }
 
         $validator = validator::make($request->all(), [
-            'imgs' => ['min:1', 'max:3'],
+            'imgs' => ['min:3', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {

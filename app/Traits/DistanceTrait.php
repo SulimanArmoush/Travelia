@@ -4,8 +4,10 @@ namespace App\Traits;
 
 trait DistanceTrait
 {
-    public function distance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
+    public function distance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
     {
+        $earthRadius = 6371;
+
         // تحويل من الدرجات إلى الراديان
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);

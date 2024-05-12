@@ -16,7 +16,7 @@ class Location extends Model
         'address',
         'country',
         'state',
-        'country_code'
+        'city'
         ];
 
 

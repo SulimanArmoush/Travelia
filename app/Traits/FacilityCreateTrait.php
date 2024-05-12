@@ -8,7 +8,7 @@ use App\Models\TheWorld\Facilities\Location;
 trait FacilityCreateTrait
 {
 
-    public function createLocation($latitude, $longitude, $address,$country,$state,$country_code)
+    public function createLocation($latitude, $longitude, $address,$country,$state,$city)
     {
             $location = Location::create([
                 'latitude' => $latitude,
@@ -16,7 +16,7 @@ trait FacilityCreateTrait
                 'address' => $address,
                 'country'=> $country,
                 'state'=> $state,
-                'country_code'=> $country_code
+                'country_code'=> $city
             ]);
             return $location;
     }
