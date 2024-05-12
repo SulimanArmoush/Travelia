@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('transporter_id');
             $table->integer('totalCapacity');
             $table->double('cost');
-            $table->set('type', ['normalPlane','businessClassPlane','pullman',' van']);
+            $table->set('type', ['normalPlane','businessClassPlane','pullman','bus',' van']);
             $table->set('status', ['available', 'unAvailable'])->default('available');
             $table->timestamps();
 

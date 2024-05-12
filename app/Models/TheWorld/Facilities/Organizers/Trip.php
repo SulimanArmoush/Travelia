@@ -16,9 +16,12 @@ class Trip extends Model
         'cost',
         'dateTime',
         'totalCapacity',
+        'strLocation',
         'imgs',
-        'location_id',
         'touristArea',
+        'hotel',
+        'restaurant',
+        'transporter',
         'status',
     ];
 
