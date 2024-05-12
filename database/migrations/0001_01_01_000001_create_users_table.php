@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('passport')->nullable();
             $table->unsignedBigInteger('role_id');
             $table->double('wallet')->default(0.0);
-            $table->set('confirmation', [0,1,2])->default(0);
+            $table->set('confirmation', ['0','1','2'])->default('0');
 
 
 

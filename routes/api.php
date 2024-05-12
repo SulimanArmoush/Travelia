@@ -15,9 +15,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::Post('login', 'login')->name('login');
 
     Route::middleware(['auth:api'])->group(function () {
-        Route::Put('profile', 'profile')->name('profile');
-        Route::Put('photo', 'photo')->name('photo');
-        Route::Put('passport', 'passport')->name('passport');
+        Route::Post('profile', 'profile')->name('profile');
+        Route::Post('photo', 'photo')->name('photo');
+        Route::Post('passport', 'passport')->name('passport');
         Route::Post('logout', 'logout')->name('logout');
     });
 });
@@ -26,11 +26,12 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::controller(FacilityController::class)->group(function () {
         Route::Post('createAccount', 'createAccount')->name('createAccount');
-        Route::Put('imgUpload', 'imgUpload')->name('imgUpload');
+        Route::Post('imgUpload', 'imgUpload')->name('imgUpload');
     });
 
     Route::controller(TransporterController::class)->group(function () {
-        Route::Post('createTransportations', 'createTransportations')->name('createTransportations');
+        Route::Post('createAirTransportations', 'createAirTransportations')->name('createAirTransportations');
+        Route::Post('createLandTransportations', 'createLandTransportations')->name('createLandTransportations');
         Route::Get('getTransportation/{transportation_id}', 'getTransportation')->name('getTransportation');
         Route::Get('getTransportations/{transporter_id}', 'getTransportations')->name('getTransportations');
         Route::Get('getAvailableTransportations/{transporter_id}', 'getAvailableTransportations')->name('getAvailableTransportations');
@@ -50,7 +51,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::controller(AdminController::class)->group(function () {
         Route::Get('getRequiermemts', 'getRequiermemts')->name('getRequiermemts');
         Route::Get('getRequiermemt/{requiermemt_id}', 'getRequiermemt')->name('getRequiermemt');
-        Route::Put('handlingRequierment/{requiermemt_id}', 'handlingRequierment')->name('handlingRequierment');
+        Route::Post('handlingRequierment/{requiermemt_id}', 'handlingRequierment')->name('handlingRequierment');
     });
     Route::controller(UserController::class)->group(function () {
         Route::Get('getUser/{userId}', 'getUser')->name('getUser');
@@ -62,6 +63,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getAllTourists', 'getAllTourists')->name('getAllTourists');
     });
     Route::controller(OrganizerController::class)->group(function () {
-        Route::Get('createTrip/{touristArea_id}', 'createTrip')->name('createTrip');
+        Route::Post('createTrip', 'createTrip')->name('createTrip');
+        Route::Get('getTrip/{trip_id}', 'getTrip')->name('getTrip');
+        Route::Get('getTrips', 'getTrips')->name('getTrips');
+        Route::Get('getOrganizerTrips/{organizer_id}', 'getOrganizerTrips')->name('getOrganizerTrips');
     });
 });

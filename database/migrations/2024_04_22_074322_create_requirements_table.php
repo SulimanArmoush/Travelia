@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('note');
+            $table->string('note');
             $table->set('status', ['onHold', 'accept', 'reject'])->default('onHold');
             $table->timestamps();
 
