@@ -28,7 +28,7 @@ class OrganizerController extends Controller
             'state' => ['required', 'string'],
             'city' => ['required', 'string'],
 
-            'imgs' => ['min:3', 'max:3'],
+            'imgs' => ['required','min:3', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
 
             'touristArea_id' => ['required', 'integer'],
