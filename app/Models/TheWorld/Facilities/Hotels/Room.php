@@ -9,6 +9,7 @@ class Room extends Model
 {
     use HasFactory;
     protected $fillable = ['hotel_id','cost','type','status'] ;
+    protected $hidden = ['created_at', 'updated_at'];
 
 
     public function hotelReservations()

@@ -10,6 +10,7 @@ class Transporter extends Model
 {
     use HasFactory;
     protected $fillable = ['facility_id', 'type'];
+    protected $hidden = ['created_at', 'updated_at'];
 
 
     public function facility()

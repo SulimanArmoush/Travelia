@@ -19,10 +19,10 @@ return new class extends Migration
             $table->integer('totalCapacity');
             $table->string('imgs');
             $table->unsignedBigInteger('strLocation');
-            $table->unsignedBigInteger('touristArea');
-            $table->unsignedBigInteger('hotel');
-            $table->unsignedBigInteger('restaurant');
-            $table->unsignedBigInteger('transporter');
+            $table->unsignedBigInteger('touristArea_id');
+            $table->unsignedBigInteger('hotel_id');
+            $table->unsignedBigInteger('restaurant_id');
+            $table->unsignedBigInteger('transporter_id');
             $table->set('status', ['available','ongoing','finished'])->default('available');
 
             $table->timestamps();
@@ -30,10 +30,10 @@ return new class extends Migration
 
             $table->foreign('organizer_id')->references('id')->on('organizers')->onDelete('cascade');
             $table->foreign('strLocation')->references('id')->on('locations')->onDelete('cascade');
-            $table->foreign('touristArea')->references('id')->on('tourist_areas')->onDelete('cascade');
-            $table->foreign('hotel')->references('id')->on('hotels')->onDelete('cascade');
-            $table->foreign('restaurant')->references('id')->on('restaurants')->onDelete('cascade');
-            $table->foreign('transporter')->references('id')->on('transporters')->onDelete('cascade');
+            $table->foreign('touristArea_id')->references('id')->on('tourist_areas')->onDelete('cascade');
+            $table->foreign('hotel_id')->references('id')->on('hotels')->onDelete('cascade');
+            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+            $table->foreign('transporter_id')->references('id')->on('transporters')->onDelete('cascade');
 
         });
     }

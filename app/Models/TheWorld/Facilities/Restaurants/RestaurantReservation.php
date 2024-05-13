@@ -12,6 +12,7 @@ class RestaurantReservation extends Model
     use HasFactory;
     protected $fillable = ['user_id','table_id','dateTime'] ;
 
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function user()
     {

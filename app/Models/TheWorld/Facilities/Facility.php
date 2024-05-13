@@ -22,6 +22,7 @@ class Facility extends Model
         'location_id',
         'user_id',
     ] ;
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function user()
     {

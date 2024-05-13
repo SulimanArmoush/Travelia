@@ -10,13 +10,14 @@ class Organizer extends Model
 {
     use HasFactory;
     protected $fillable = ['facility_id','type'] ;
+    protected $hidden = ['created_at', 'updated_at'];
 
-    
-    public function facility() { 
-        return $this->belongsTo(Facility::class); 
-    } 
 
-    public function trips() 
+    public function facility() {
+        return $this->belongsTo(Facility::class);
+    }
+
+    public function trips()
     {
         return $this->hasMany(Trip::class);
     }

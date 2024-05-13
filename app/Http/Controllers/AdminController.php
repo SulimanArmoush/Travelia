@@ -29,15 +29,6 @@ class AdminController extends Controller
         if ($requiermemt_info->user->facility->imgs) {
             $requiermemt_info->user->facility->imgs = json_decode($requiermemt_info->user->facility->imgs);
         }
-        // إزالة الطوابع الزمنية
-        unset($requiermemt_info->created_at);
-        unset($requiermemt_info->updated_at);
-        unset($requiermemt_info->user->created_at);
-        unset($requiermemt_info->user->updated_at);
-        unset($requiermemt_info->user->facility->created_at);
-        unset($requiermemt_info->user->facility->updated_at);
-        unset($requiermemt_info->user->facility->location->created_at);
-        unset($requiermemt_info->user->facility->location->updated_at);
 
         return response()->json($requiermemt_info, 200);
     }

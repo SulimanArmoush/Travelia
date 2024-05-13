@@ -17,9 +17,9 @@ class OrganizerController extends Controller
         $organizer = auth()->user()->facility->organizer;
 
         $validator = validator::make($request->all(), [
-            'cost'=> ['required','numeric'],
-            'dateTime'=> ['required','date'],
-            'totalCapacity'=> ['required','integer'],
+            'cost' => ['required', 'numeric'],
+            'dateTime' => ['required', 'date'],
+            'totalCapacity' => ['required', 'integer'],
 
             'latitude' => ['required', 'string'],
             'longitude' => ['required', 'string'],
@@ -31,10 +31,10 @@ class OrganizerController extends Controller
             'imgs' => ['min:3', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
 
-            'touristArea'=>['required','integer'],
-            'hotel'=>['required','integer'],
-            'restaurant'=>['required','integer'],
-            'transporter'=>['required','integer'],
+            'touristArea_id' => ['required', 'integer'],
+            'hotel_id' => ['required', 'integer'],
+            'restaurant_id' => ['required', 'integer'],
+            'transporter_id' => ['required', 'integer'],
         ]);
 
         if ($validator->fails()) {
@@ -53,16 +53,16 @@ class OrganizerController extends Controller
         );
 
         Trip::create([
-            'organizer_id'=>$organizer->id,
+            'organizer_id' => $organizer->id,
             'cost' => $request->cost,
-            'dateTime'=>$request->dateTime,
-            'totalCapacity'=>$request->totalCapacity,
+            'dateTime' => $request->dateTime,
+            'totalCapacity' => $request->totalCapacity,
             'imgs' => $images,
-            'strLocation'=>$location->id,
-            'touristArea'=>$request->touristArea,
-            'hotel'=>$request->hotel,
-            'restaurant'=>$request->restaurant,
-            'transporter'=>$request->transporter,
+            'strLocation' => $location->id,
+            'touristArea_id' => $request->touristArea_id,
+            'hotel_id' => $request->hotel_id,
+            'restaurant_id' => $request->restaurant_id,
+            'transporter_id' => $request->transporter_id,
         ]);
 
         return response()->json(['message' => 'Your Trip created successfully'], 200);
@@ -70,22 +70,46 @@ class OrganizerController extends Controller
 
     public function getTrip($trip_id)
     {
-        $trip = Trip::find($trip_id);
-        if(!$trip){return response()->json(['error' => 'Trip not Found'], 404);}
+        $trip = Trip::with(
+            'location',
+            'hotel.facility',
+            'restaurant.facility',
+            'transporter.facility',
+            'touristArea.location'
+        )->find($trip_id);
+        if (!$trip) {
+            return response()->json(['error' => 'Trip not Found'], 404);
+        }
+        $trip->imgs = json_decode($trip->imgs);
+        $trip->hotel->facility->imgs = json_decode($trip->hotel->facility->imgs);
+        $trip->restaurant->facility->imgs = json_decode($trip->restaurant->facility->imgs);
+        $trip->transporter->facility->imgs = json_decode($trip->transporter->facility->imgs);
+        $trip->touristArea->imgs = json_decode($trip->touristArea->imgs);
+
         return response()->json(['trip' => $trip], 200);
     }
 
     public function getTrips()
     {
         $trips = Trip::all();
-        if(!$trips){return response()->json(['error' => 'Trips not Found'], 404);}
+        if (!$trips) {
+            return response()->json(['error' => 'Trips not Found'], 404);
+        }
+        foreach ($trips as $trip) {
+            $trip->imgs = json_decode($trip->imgs);
+        }
         return response()->json(['trips' => $trips], 200);
     }
 
     public function getOrganizerTrips($organizer_id)
     {
-        $trips = Trip::where('organizer_id',$organizer_id)->get();
-        if(!$trips){return response()->json(['error' => 'Trips not Found'], 404);}
+        $trips = Trip::where('organizer_id', $organizer_id)->get();
+        if (!$trips) {
+            return response()->json(['error' => 'Trips not Found'], 404);
+        }
+        foreach ($trips as $trip) {
+            $trip->imgs = json_decode($trip->imgs);
+        }
         return response()->json(['trips' => $trips], 200);
     }
 }
