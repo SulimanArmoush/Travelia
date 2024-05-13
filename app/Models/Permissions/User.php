@@ -18,7 +18,7 @@ use App\Models\TheWorld\Facilities\Facility;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable ,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +48,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -93,13 +95,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(Facility::class)->with('location');
     }
+
     public function favorites()
     {
         return $this->belongsToMany(Facility::class, 'favorites');
     }
 
-    public function recuirement() { 
-        return $this->hasOne(Requirement::class); 
+    public function recuirement()
+    {
+        return $this->hasOne(Requirement::class);
     }
 
 }

@@ -9,5 +9,6 @@ class Favorite extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id','facility_id'] ;
+    protected $hidden = ['created_at', 'updated_at'];
 
 }

@@ -76,7 +76,6 @@ class FacilityController extends Controller
         if (!$request->hasFile('imgs')) {
             return response()->json(['error' => 'No images provided'], 400);
         }
-
         $validator = validator::make($request->all(), [
             'imgs' => ['min:3', 'max:3'],
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
@@ -86,6 +85,7 @@ class FacilityController extends Controller
         }
 
         $facility = Facility::find(auth()->user()->facility()->first()->id);
+
         if (!$facility) {
             return response()->json(['error' => 'Facility not found'], 404);
         }

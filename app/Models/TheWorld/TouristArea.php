@@ -18,6 +18,8 @@ class TouristArea extends Model
         'type'
     ] ;
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function location()
     {
         return $this->belongsTo(Location::class);

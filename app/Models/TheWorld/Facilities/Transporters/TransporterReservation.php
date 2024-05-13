@@ -11,6 +11,7 @@ class TransporterReservation extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'transportation_id', 'placeNum', 'dateTime'];
+    protected $hidden = ['created_at', 'updated_at'];
 
 
     public function user()

@@ -9,6 +9,7 @@ class Transportation extends Model
 {
     use HasFactory;
     protected $fillable = ['transporter_id','totalCapacity','cost','type','status'] ;
+    protected $hidden = ['created_at', 'updated_at'];
 
 
     public function transporterReservations()

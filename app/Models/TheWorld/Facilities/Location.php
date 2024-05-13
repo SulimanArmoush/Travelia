@@ -19,6 +19,8 @@ class Location extends Model
         'city'
         ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
 
     public function facility()
     {
