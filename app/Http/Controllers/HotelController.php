@@ -12,6 +12,10 @@ class HotelController extends Controller
     {
         $hotel = auth()->user()->facility->hotel;
 
+        if (!$hotel) {
+            return response()->json(['message' => "Hotel Not Found"], 404);
+        }
+
         $validator = validator::make($request->all(), [
             'num1' => ['integer'],
             'cost1' => ['numeric'],
@@ -54,24 +58,44 @@ class HotelController extends Controller
         return response()->json(['message' => 'Your Rooms created successfully'], 200);
     }
 
-    public function getRoom($Room_id)
+    public function getRoom($room_id)
     {
-        $room = Room::find($Room_id);
-        return response()->json(['room' => $room], 200);
+        if (!$room_id) {
+            return response()->json(['message' => "Room Not Found"], 404);
+        }
+        $room = Room::find($room_id);
+        if (!$room) {
+            return response()->json(['message' => "Room Not Found"], 404);
+        }
+        return response()->json($room, 200);
     }
 
     public function getRooms($hotel_id)
     {
+        if (!$hotel_id) {
+            return response()->json(['message' => "Hotel Not Found"], 404);
+        }
         $rooms = Room::Where('hotel_id', $hotel_id)
             ->paginate(10);
+
+        if (!$rooms) {
+            return response()->json(['message' => "Rooms Not Found"], 404);
+        }
         return response()->json(['rooms' => $rooms], 200);
     }
 
     public function getAvailableRooms($hotel_id)
     {
+        if (!$hotel_id) {
+            return response()->json(['message' => "Hotel Not Found"], 404);
+        }
         $rooms = Room::Where('hotel_id', $hotel_id)
             ->where('status', 'available')
             ->paginate(10);
+
+        if (!$rooms) {
+            return response()->json(['message' => "Rooms Not Found"], 404);
+        }
         return response()->json(['rooms' => $rooms], 200);
 
     }

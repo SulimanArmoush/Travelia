@@ -23,7 +23,7 @@ class AuthController extends Controller
             'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', ValidationRule::unique(table: 'users')],
             'password' => ['required', 'string', 'min:8'],
-            'photo' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'photo' => ['required','image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
             'role_id' => 'required',
         ]);
         if ($validator->fails()) {
@@ -53,11 +53,15 @@ class AuthController extends Controller
 
         $u = User::find($user->id);
 
+        if (!$u) {
+            return response()->json(['message' => "User Not Found"], 404);
+        }
+
         $data['user'] = $u;
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
 
-        return response()->json(['data' => $data, 'status' => 200, 'message' => 'signed up successfully']);
+        return response()->json(['data' => $data, 'message' => 'signed up successfully'],200);
     }
 
     public function login(Request $request)
@@ -76,7 +80,6 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        //add token to user
         $tokenResult = $user->createToken('personal Access Token'); //->accessToken;
 
         $user = User::where('id', '=', auth()->id())->first();
@@ -87,14 +90,14 @@ class AuthController extends Controller
         $data['access_token'] = $tokenResult->accessToken;
         $data['role'] = $role;
 
-        return response()->json(['data' => $data, 'status' => 200, 'message' => 'logedd In successfully']);
+        return response()->json(['data' => $data,'message' => 'logedd In successfully'],200);
     }
 
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'logged out ', 'status' => 200]);
+        return response()->json(['message' => 'logged out '],200);
     }
 
     public function profile(Request $request)
@@ -108,14 +111,14 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        User::find(Auth::id())->update([
+        $user = User::find(Auth::id())->update([
             'phone' => $request->phone,
             'address' => $request->address,
             'age' => $request->age,
             'confirmation'=>'2'
         ]);
 
-        return response()->json(['message' => 'Your profile updated successfully']);
+        return response()->json(['user'=>$user ,'message' => 'Your profile updated successfully'],200);
     }
 
     public function photo(Request $request)
@@ -133,7 +136,7 @@ class AuthController extends Controller
             'photo' => $photoPath,
         ]);
 
-        return response()->json(['photoPath' => $photoPath, 'message' => 'Your photo added successfully']);
+        return response()->json(['photoPath' => $photoPath, 'message' => 'Your photo added successfully'],200);
     }
 
     public function passport(Request $request)
@@ -152,7 +155,7 @@ class AuthController extends Controller
             'passport' => $passportPath,
         ]);
 
-        return response()->json(['passportPath' => $passportPath, 'message' => 'Your passport added successfully']);
+        return response()->json(['passportPath' => $passportPath, 'message' => 'Your passport added successfully'],200);
     }
 
 }

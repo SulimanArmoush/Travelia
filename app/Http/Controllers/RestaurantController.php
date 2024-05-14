@@ -12,7 +12,9 @@ class RestaurantController extends Controller
     public function createTables(Request $request)
     {
         $restaurant = auth()->user()->facility->restaurant;
-
+        if (!$restaurant) {
+            return response()->json(['error' => 'Restaurant not Found'], 404);
+        }
         $validator = validator::make($request->all(), [
             'num1' => ['integer'],
             'cost1' => ['numeric'],
@@ -58,23 +60,45 @@ class RestaurantController extends Controller
 
     public function getTable($table_id)
     {
+        if (!$table_id) {
+            return response()->json(['error' => 'Table not Found'], 404);
+        }
         $table = Table::find($table_id);
-        return response()->json(['table' => $table], 200);
+
+        if (!$table) {
+            return response()->json(['error' => 'Table not Found'], 404);
+        }
+        return response()->json($table, 200);
     }
 
     public function getTables($restaurant_id)
     {
+        if (!$restaurant_id) {
+            return response()->json(['error' => 'Restaurant not Found'], 404);
+        }
+
         $tables = Table::Where('restaurant_id', $restaurant_id)
             ->paginate(10);
+
+        if (!$tables) {
+            return response()->json(['error' => 'Tables not Found'], 404);
+        }
         return response()->json(['tables' => $tables], 200);
     }
 
     public function getAvailableTables($restaurant_id)
     {
+        if (!$restaurant_id) {
+            return response()->json(['error' => 'Restaurant not Found'], 404);
+        }
 
         $tables = Table::Where('restaurant_id', $restaurant_id)
             ->where('status', 'available')
             ->paginate(10);
+
+        if (!$tables) {
+            return response()->json(['error' => 'Tables not Found'], 404);
+        }
         return response()->json(['tables' => $tables], 200);
 
     }

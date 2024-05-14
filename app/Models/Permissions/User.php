@@ -4,6 +4,7 @@ namespace App\Models\Permissions;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\TheWorld\Facilities\Requirement;
+use App\Models\TheWorld\Facilities\Reservation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -71,19 +72,9 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function hotelReservations()
+    public function reservations()
     {
-        return $this->hasMany(HotelReservation::class);
-    }
-
-    public function restaurantReservations()
-    {
-        return $this->hasMany(RestaurantReservation::class);
-    }
-
-    public function transporterReservations()
-    {
-        return $this->hasMany(TransporterReservation::class);
+        return $this->hasMany(Reservation::class);
     }
 
     public function tripReservations()

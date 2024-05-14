@@ -49,9 +49,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getAvailableTables/{restaurant_id}', 'getAvailableTables')->name('getAvailableTables');
     });
     Route::controller(AdminController::class)->group(function () {
-        Route::Get('getRequiermemts', 'getRequiermemts')->name('getRequiermemts');
-        Route::Get('getRequiermemt/{requiermemt_id}', 'getRequiermemt')->name('getRequiermemt');
-        Route::Post('handlingRequierment/{requiermemt_id}', 'handlingRequierment')->name('handlingRequierment');
+        Route::Get('getRequierments', 'getRequierments')->name('getRequierments');
+        Route::Get('getRequierment/{requierment_id}', 'getRequierment')->name('getRequierment');
+        Route::Post('handlingRequierment/{requierment_id}', 'handlingRequierment')->name('handlingRequierment');
     });
     Route::controller(UserController::class)->group(function () {
         Route::Get('getUser/{userId}', 'getUser')->name('getUser');
