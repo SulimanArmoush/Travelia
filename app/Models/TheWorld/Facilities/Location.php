@@ -2,6 +2,7 @@
 
 namespace App\Models\TheWorld\Facilities;
 
+use App\Models\TheWorld\Facilities\Organizers\Trip;
 use App\Models\TheWorld\TouristArea;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,11 @@ class Location extends Model
     public function touristArea()
     {
         return $this->hasOne(TouristArea::class);
+    }
+
+    public function trip()
+    {
+        return $this->hasOne(Trip::class);
     }
 
 }

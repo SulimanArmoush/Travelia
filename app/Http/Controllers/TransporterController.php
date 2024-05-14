@@ -12,6 +12,10 @@ class TransporterController extends Controller
     {
         $transporter = auth()->user()->facility->transporter;
 
+        if (!$transporter) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
+        }
+
         if ($transporter->type != 'air') {
             return response()->json(['error' => 'your not in airType'], 400);
         }
@@ -54,6 +58,10 @@ class TransporterController extends Controller
     public function createLandTransportations(Request $request)
     {
         $transporter = auth()->user()->facility->transporter;
+
+        if (!$transporter) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
+        }
 
         if ($transporter->type != 'land') {
             return response()->json(['error' => 'your not in landType'], 400);
@@ -110,23 +118,46 @@ class TransporterController extends Controller
 
     public function getTransportation($transportation_id)
     {
+        if (!$transportation_id) {
+            return response()->json(['error' => 'Transportation not Found'], 404);
+        }
         $transportation = Transportation::find($transportation_id);
+
+        if (!$transportation) {
+            return response()->json(['error' => 'Transportation not Found'], 404);
+        }
         return response()->json(['transportation' => $transportation], 200);
     }
 
     public function getTransportations($transporter_id)
     {
+        if (!$transporter_id) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
+        }
         $transportations = Transportation::Where('transporter_id', '=', $transporter_id)
             ->paginate(10);
-        return response()->json(['transportations' => $transportations], 200);
+
+        if (!$transportations) {
+            return response()->json(['error' => 'Transportations not Found'], 404);
+        }
+        return response()->json($transportations, 200);
     }
 
     public function getAvailableTransportations($transporter_id)
     {
+        if (!$transporter_id) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
+        }
+
         $transportations = Transportation::
         Where('transporter_id', $transporter_id)
             ->where('status', 'available')
             ->paginate(10);
+
+        if (!$transportations) {
+            return response()->json(['error' => 'Transportations not Found'], 404);
+        }
+
         return response()->json(['transportations' => $transportations], 200);
     }
 }

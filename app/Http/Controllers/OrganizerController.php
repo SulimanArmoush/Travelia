@@ -16,6 +16,10 @@ class OrganizerController extends Controller
     {
         $organizer = auth()->user()->facility->organizer;
 
+        if (!$organizer) {
+            return response()->json(['message' => "Organizer Not Found"], 404);
+        }
+
         $validator = validator::make($request->all(), [
             'cost' => ['required', 'numeric'],
             'dateTime' => ['required', 'date'],
@@ -70,6 +74,9 @@ class OrganizerController extends Controller
 
     public function getTrip($trip_id)
     {
+        if (!$trip_id) {
+            return response()->json(['message' => "Trip Not Found"], 404);
+        }
         $trip = Trip::with(
             'location',
             'hotel.facility',
@@ -86,7 +93,7 @@ class OrganizerController extends Controller
         $trip->transporter->facility->imgs = json_decode($trip->transporter->facility->imgs);
         $trip->touristArea->imgs = json_decode($trip->touristArea->imgs);
 
-        return response()->json(['trip' => $trip], 200);
+        return response()->json($trip,200);
     }
 
     public function getTrips()
@@ -103,10 +110,16 @@ class OrganizerController extends Controller
 
     public function getOrganizerTrips($organizer_id)
     {
+        if (!$organizer_id) {
+            return response()->json(['message' => "Organizer Not Found"], 404);
+        }
+
         $trips = Trip::where('organizer_id', $organizer_id)->get();
+
         if (!$trips) {
             return response()->json(['error' => 'Trips not Found'], 404);
         }
+
         foreach ($trips as $trip) {
             $trip->imgs = json_decode($trip->imgs);
         }

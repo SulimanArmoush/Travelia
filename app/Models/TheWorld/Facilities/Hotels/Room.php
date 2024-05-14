@@ -12,10 +12,6 @@ class Room extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function hotelReservations()
-    {
-        return $this->hasMany(HotelReservation::class);
-    }
     public function hotel()
     {
         return $this->belongsTo(Hotel::class);

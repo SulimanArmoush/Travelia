@@ -43,7 +43,7 @@ class TouristAreaController extends Controller
 
         $images = $this->upload($request->imgs);
 
-        TouristArea::create([
+        $touristArea = TouristArea::create([
             'name' => $request->name,
             'description' => $request->description,
             'type' => $request->type,
@@ -51,11 +51,14 @@ class TouristAreaController extends Controller
             'imgs' => $images
         ]);
 
-        return response()->json(['message' => 'TouristArea created successfully'], 200);
+        return response()->json(['touristArea'=> $touristArea,'message' => 'TouristArea created successfully'], 200);
     }
 
     public function getTouristArea($TouristArea_id)
     {
+        if (!$TouristArea_id) {
+            return response()->json(['error' => 'TouristArea not Found'], 404);
+        }
         $touristArea = TouristArea::with('location')->find($TouristArea_id);
 
         if (!$touristArea) {
@@ -63,7 +66,7 @@ class TouristAreaController extends Controller
         }
         $touristArea->imgs = json_decode($touristArea->imgs);
 
-        return response()->json(['touristArea' => $touristArea], 200);
+        return response()->json($touristArea, 200);
     }
 
     public function getTouristAreas()
