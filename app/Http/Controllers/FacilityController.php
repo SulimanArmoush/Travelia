@@ -59,8 +59,8 @@ class FacilityController extends Controller
             5 => Transporter::class,
         ];
 
-        if (array_key_exists(auth()->user()->role_id, $roles)) {
-            $roles[auth()->user()->role_id]::create([
+        if (array_key_exists(Auth::user()->role_id, $roles)) {
+            $roles[Auth::user()->role_id]::create([
                 'facility_id' => $facility->id,
                 'type' => $request->type,
             ]);
@@ -72,7 +72,6 @@ class FacilityController extends Controller
 
     public function imgUpload(Request $request)
     {
-
         if (!$request->hasFile('imgs')) {
             return response()->json(['error' => 'No images provided'], 400);
         }
@@ -84,12 +83,7 @@ class FacilityController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        $facility = Facility::find(auth()->user()->facility()->first()->id);
-
-        if (!$facility) {
-            return response()->json(['error' => 'Facility not found'], 404);
-        }
-
+        $facility = auth()->user()->facility()->firstOrFail();
 
         $images = $this->upload($request->imgs);
 
@@ -99,4 +93,5 @@ class FacilityController extends Controller
 
         return response()->json(['imgs' => json_decode($images), 'message' => 'Your images Added successfully'], 200);
     }
+
 }

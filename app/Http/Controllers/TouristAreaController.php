@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TheWorld\TouristArea;
 use App\Traits\FacilityCreateTrait;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\PhotoTrait;
@@ -56,24 +57,20 @@ class TouristAreaController extends Controller
 
     public function getTouristArea($TouristArea_id)
     {
-        if (!$TouristArea_id) {
+        try {
+            $touristArea = TouristArea::with('location')->findOrFail($TouristArea_id);
+            $touristArea->imgs = json_decode($touristArea->imgs);
+            return response()->json($touristArea, 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'TouristArea not Found'], 404);
         }
-        $touristArea = TouristArea::with('location')->find($TouristArea_id);
-
-        if (!$touristArea) {
-            return response()->json(['error' => 'TouristArea not Found'], 404);
-        }
-        $touristArea->imgs = json_decode($touristArea->imgs);
-
-        return response()->json($touristArea, 200);
     }
 
     public function getTouristAreas()
     {
-        $touristAreas = TouristArea::with('location')->all();
+        $touristAreas = TouristArea::with('location')->get();
 
-        if (!$touristAreas) {
+        if ($touristAreas->isEmpty()) {
             return response()->json(['error' => 'TouristAreas not Found'], 404);
         }
         foreach ($touristAreas as $touristArea) {

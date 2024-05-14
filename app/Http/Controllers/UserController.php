@@ -4,35 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Permissions\User;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
-
-
     public function getUser($userId)
     {
-        if (!$userId) {
+        try {
+            $user = User::findOrFail($userId);
+            if (in_array($user->role_id, [2, 3, 4, 5])) {
+                $user->facility = $user->facility;
+            }
+            return response()->json($user, 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
-        $user = User::find($userId);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        if (in_array($user->role_id, [2, 3, 4, 5])) {
-            $user->facility = $user->facility;
-        }
-
-        return response()->json($user, 200);
     }
 
     public function getAllUsers()
     {
         $users = User::paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
         return response()->json(['users' => $users], 200);
@@ -42,8 +34,7 @@ class UserController extends Controller
     {
         $users = User::where('role_id', '=', '2')->with('facility.organizer')
             ->paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
         return response()->json(['users' => $users], 200);
@@ -53,8 +44,7 @@ class UserController extends Controller
     {
         $users = User::where('role_id', '=', '3')->with('facility.hotel')
             ->paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
         return response()->json(['users' => $users], 200);
@@ -64,8 +54,7 @@ class UserController extends Controller
     {
         $users = User::where('role_id', '=', '4')->with('facility.restaurant')
             ->paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
         return response()->json(['users' => $users], 200);
@@ -75,8 +64,7 @@ class UserController extends Controller
     {
         $users = User::where('role_id', '=', '5')->with('facility.transporter')
             ->paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
         return response()->json(['users' => $users], 200);
@@ -86,12 +74,9 @@ class UserController extends Controller
     {
         $users = User::where('role_id', '=', '6')
             ->paginate(10);
-
-        if (!$users) {
+        if ($users->isEmpty()) {
             return response()->json(['error' => 'Users not found'], 404);
         }
-
         return response()->json(['users' => $users], 200);
     }
-
 }

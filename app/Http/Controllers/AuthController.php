@@ -23,9 +23,10 @@ class AuthController extends Controller
             'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', ValidationRule::unique(table: 'users')],
             'password' => ['required', 'string', 'min:8'],
-            'photo' => ['required','image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
             'role_id' => 'required',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
@@ -33,7 +34,7 @@ class AuthController extends Controller
         $request['password'] = bcrypt($request['password']);
         $photoPath = $this->saveImage($request->photo);
 
-        $user = User::query()->create([
+        $user = User::create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
             'email' => $request->email,
@@ -51,17 +52,11 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('personal Access Token');
 
-        $u = User::find($user->id);
-
-        if (!$u) {
-            return response()->json(['message' => "User Not Found"], 404);
-        }
-
-        $data['user'] = $u;
+        $data['user'] = $user;
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
 
-        return response()->json(['data' => $data, 'message' => 'signed up successfully'],200);
+        return response()->json(['data' => $data, 'message' => 'signed up successfully'], 200);
     }
 
     public function login(Request $request)
@@ -80,64 +75,68 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        $tokenResult = $user->createToken('personal Access Token'); //->accessToken;
+        $tokenResult = $user->createToken('personal Access Token');
 
-        $user = User::where('id', '=', auth()->id())->first();
-        $role = Role::where('id', '=', $user->role_id)->first();
+        $role = Role::findOrFail($user->role_id);
 
         $data['user'] = $user;
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
         $data['role'] = $role;
 
-        return response()->json(['data' => $data,'message' => 'logedd In successfully'],200);
+        return response()->json(['data' => $data, 'message' => 'logged In successfully'], 200);
     }
+
 
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'logged out '],200);
+        return response()->json(['message' => 'logged out '], 200);
     }
 
     public function profile(Request $request)
     {
-
         $validator = validator::make($request->all(), [
             'phone' => ['string', 'max:10', 'min:10', 'regex:/^09[0-9]{8}/', ValidationRule::unique(table: 'users')], //syrian number
             'age' => ['integer'],
             'address' => ['string', 'max:255'],
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-        $user = User::find(Auth::id())->update([
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'age' => $request->age,
-            'confirmation'=>'2'
-        ]);
 
-        return response()->json(['user'=>$user ,'message' => 'Your profile updated successfully'],200);
+        $updateData = array_filter($request->only('phone', 'address', 'age'));
+        $updateData['confirmation'] = '2';
+
+        $user = Auth::user();
+        $user->update($updateData);
+
+        return response()->json(['user' => $user, 'message' => 'Your profile updated successfully'], 200);
     }
+
 
     public function photo(Request $request)
     {
         $validator = validator::make($request->all(), [
             'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
 
         $photoPath = $this->saveImage($request->photo);
 
-        User::find(Auth::id())->update([
+        $user = Auth::user();
+        $user->update([
             'photo' => $photoPath,
         ]);
 
-        return response()->json(['photoPath' => $photoPath, 'message' => 'Your photo added successfully'],200);
+        return response()->json(['photoPath' => $photoPath, 'message' => 'Your photo added successfully'], 200);
     }
+
 
     public function passport(Request $request)
     {
@@ -151,11 +150,11 @@ class AuthController extends Controller
 
         $passportPath = $this->saveImage($request->passport);
 
-        User::find(Auth::id())->update([
+        $user = Auth::user();
+        $user->update([
             'passport' => $passportPath,
         ]);
-
-        return response()->json(['passportPath' => $passportPath, 'message' => 'Your passport added successfully'],200);
+        return response()->json(['passportPath' => $passportPath, 'message' => 'Your passport added successfully'], 200);
     }
 
 }
