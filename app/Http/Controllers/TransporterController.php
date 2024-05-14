@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TheWorld\Facilities\Transporters\Transportation;
+use App\Models\TheWorld\Facilities\Transporters\Transporter;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,16 +12,6 @@ class TransporterController extends Controller
 {
     public function createAirTransportations(Request $request)
     {
-        $transporter = auth()->user()->facility->transporter;
-
-        if (!$transporter) {
-            return response()->json(['error' => 'Transporter not Found'], 404);
-        }
-
-        if ($transporter->type != 'air') {
-            return response()->json(['error' => 'your not in airType'], 400);
-        }
-
         $validator = validator::make($request->all(), [
             'num1' => ['integer'],
             'totalCapacity1' => ['integer'],
@@ -32,41 +24,41 @@ class TransporterController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        if ($request->num1) {
-            for ($i = 0; $i < $request->num1; $i++) {
-                Transportation::create([
-                    'transporter_id' => $transporter->id,
-                    'totalCapacity' => $request->totalCapacity1,
-                    'cost' => $request->cost1,
-                    'type' => 'normalPlane',
-                ]);
+        try {
+            $transporter = auth()->user()->facility->transporter->firstOrFail();
+
+            if ($transporter->type != 'air') {
+                return response()->json(['error' => 'your not in airType'], 400);
             }
-        }
-        if ($request->num2) {
-            for ($i = 0; $i < $request->num2; $i++) {
-                Transportation::create([
-                    'transporter_id' => $transporter->id,
-                    'totalCapacity' => $request->totalCapacity2,
-                    'cost' => $request->cost2,
-                    'type' => 'businessClassPlane',
-                ]);
+
+            if ($request->num1) {
+                for ($i = 0; $i < $request->num1; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity1,
+                        'cost' => $request->cost1,
+                        'type' => 'normalPlane',
+                    ]);
+                }
             }
+            if ($request->num2) {
+                for ($i = 0; $i < $request->num2; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity2,
+                        'cost' => $request->cost2,
+                        'type' => 'businessClassPlane',
+                    ]);
+                }
+            }
+            return response()->json(['message' => 'Your Transportation created successfully'], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
         }
-        return response()->json(['message' => 'Your Transportation created successfully'], 200);
     }
 
     public function createLandTransportations(Request $request)
     {
-        $transporter = auth()->user()->facility->transporter;
-
-        if (!$transporter) {
-            return response()->json(['error' => 'Transporter not Found'], 404);
-        }
-
-        if ($transporter->type != 'land') {
-            return response()->json(['error' => 'your not in landType'], 400);
-        }
-
         $validator = validator::make($request->all(), [
             'num1' => ['integer'],
             'totalCapacity1' => ['integer'],
@@ -82,82 +74,91 @@ class TransporterController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        if ($request->num1) {
-            for ($i = 0; $i < $request->num1; $i++) {
-                Transportation::create([
-                    'transporter_id' => $transporter->id,
-                    'totalCapacity' => $request->totalCapacity1,
-                    'cost' => $request->cost1,
-                    'type' => 'pullman',
-                ]);
-            }
-        }
-        if ($request->num2) {
-            for ($i = 0; $i < $request->num2; $i++) {
-                Transportation::create([
-                    'transporter_id' => $transporter->id,
-                    'totalCapacity' => $request->totalCapacity2,
-                    'cost' => $request->cost2,
-                    'type' => 'bus',
-                ]);
-            }
-        }
-        if ($request->num3) {
-            for ($i = 0; $i < $request->num3; $i++) {
-                Transportation::create([
-                    'transporter_id' => $transporter->id,
-                    'totalCapacity' => $request->totalCapacity3,
-                    'cost' => $request->cost3,
-                    'type' => 'van',
-                ]);
-            }
-        }
+        try {
+            $transporter = auth()->user()->facility->transporter->firstOrFail();
 
-        return response()->json(['message' => 'Your Transportation created successfully'], 200);
+            if ($transporter->type != 'land') {
+                return response()->json(['error' => 'your not in landType'], 400);
+            }
+
+            if ($request->num1) {
+                for ($i = 0; $i < $request->num1; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity1,
+                        'cost' => $request->cost1,
+                        'type' => 'pullman',
+                    ]);
+                }
+            }
+            if ($request->num2) {
+                for ($i = 0; $i < $request->num2; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity2,
+                        'cost' => $request->cost2,
+                        'type' => 'bus',
+                    ]);
+                }
+            }
+            if ($request->num3) {
+                for ($i = 0; $i < $request->num3; $i++) {
+                    Transportation::create([
+                        'transporter_id' => $transporter->id,
+                        'totalCapacity' => $request->totalCapacity3,
+                        'cost' => $request->cost3,
+                        'type' => 'van',
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Your Transportation created successfully'], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Transporter not Found'], 404);
+        }
     }
 
     public function getTransportation($transportation_id)
     {
-        if (!$transportation_id) {
+        try {
+            $transportation = Transportation::findOrFail($transportation_id);
+            return response()->json($transportation, 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Transportation not Found'], 404);
         }
-        $transportation = Transportation::find($transportation_id);
-
-        if (!$transportation) {
-            return response()->json(['error' => 'Transportation not Found'], 404);
-        }
-        return response()->json(['transportation' => $transportation], 200);
     }
 
     public function getTransportations($transporter_id)
     {
-        if (!$transporter_id) {
+        try {
+            $transporter = Transporter::findOrFail($transporter_id);
+            $transportations = Transportation::where('transporter_id', $transporter->id)
+                ->paginate(10);
+
+            if ($transportations->isEmpty()) {
+                return response()->json(['error' => 'Transportations not Found'], 404);
+            }
+            return response()->json($transportations, 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Transporter not Found'], 404);
         }
-        $transportations = Transportation::Where('transporter_id', '=', $transporter_id)
-            ->paginate(10);
-
-        if (!$transportations) {
-            return response()->json(['error' => 'Transportations not Found'], 404);
-        }
-        return response()->json($transportations, 200);
     }
 
     public function getAvailableTransportations($transporter_id)
     {
-        if (!$transporter_id) {
+        try {
+            $transporter = Transporter::findOrFail($transporter_id);
+            $transportations = Transportation::where('transporter_id', $transporter->id)
+                ->where('status', 'available')
+                ->paginate(10);
+
+            if ($transportations->isEmpty()) {
+                return response()->json(['error' => 'Transportations not Found'], 404);
+            }
+            return response()->json(['transportations' => $transportations], 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Transporter not Found'], 404);
         }
-
-        $transportations = Transportation::
-        Where('transporter_id', $transporter_id)
-            ->where('status', 'available')
-            ->paginate(10);
-
-        if (!$transportations) {
-            return response()->json(['error' => 'Transportations not Found'], 404);
-        }
-
-        return response()->json(['transportations' => $transportations], 200);
     }
+
 }
