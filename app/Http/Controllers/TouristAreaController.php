@@ -13,7 +13,7 @@ class TouristAreaController extends Controller
 {
     use FacilityCreateTrait, PhotoTrait;
 
-    public function createAccount(Request $request)
+    public function createArea(Request $request)
     {
         $validator = validator::make($request->all(), [
             'name' => ['required', 'string', 'max:25'],
@@ -51,7 +51,7 @@ class TouristAreaController extends Controller
             'location_id' => $location->id,
             'imgs' => $images
         ]);
-
+        $touristArea->imgs = json_decode($touristArea->imgs);
         return response()->json(['touristArea'=> $touristArea,'message' => 'TouristArea created successfully'], 200);
     }
 

@@ -66,6 +66,9 @@ class FacilityController extends Controller
             ]);
         }
 
+        Auth::user()->update(['confirmation' => '2']);
+
+
         return response()->json(['message' => 'Your Account created successfully'], 200);
     }
 

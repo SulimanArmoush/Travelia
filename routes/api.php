@@ -5,6 +5,7 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\TouristAreaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransporterController;
@@ -35,6 +36,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getTransportation/{transportation_id}', 'getTransportation')->name('getTransportation');
         Route::Get('getTransportations/{transporter_id}', 'getTransportations')->name('getTransportations');
         Route::Get('getAvailableTransportations/{transporter_id}', 'getAvailableTransportations')->name('getAvailableTransportations');
+        Route::Post('createRouting', 'createRouting')->name('createRouting');
+        Route::Get('getRoute/{route_id}', 'getRoute')->name('getRoute');
+        Route::Get('getNearRoute', 'getNearRoute')->name('getNearRoute');
+
     });
     Route::controller(HotelController::class)->group(function () {
         Route::Post('createRooms', 'createRooms')->name('createRooms');
@@ -67,5 +72,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getTrip/{trip_id}', 'getTrip')->name('getTrip');
         Route::Get('getTrips', 'getTrips')->name('getTrips');
         Route::Get('getOrganizerTrips/{organizer_id}', 'getOrganizerTrips')->name('getOrganizerTrips');
+    });
+    Route::controller(TouristAreaController::class)->group(function () {
+        Route::Post('createArea', 'createArea')->name('createArea');
     });
 });
