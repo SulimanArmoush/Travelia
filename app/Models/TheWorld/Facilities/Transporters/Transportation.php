@@ -20,7 +20,7 @@ class Transportation extends Model
 
     public function transporter()
     {
-        return $this->belongsTo(Transporter::class);
+        return $this->hasMany(Transporter::class);
     }
 
 }
