@@ -23,11 +23,7 @@ class AdminController extends Controller
     public function getRequierment($requierment_id)
     {
         try {
-            $requierment_info = Requirement::with('user.facility')->findOrFail($requierment_id);
-
-            if (isset($requierment_info->user->facility->imgs) && is_string($requierment_info->user->facility->imgs)) {
-                $requierment_info->user->facility->imgs = json_decode($requierment_info->user->facility->imgs);
-            }
+            $requierment_info = Requirement::with('user')->findOrFail($requierment_id);
 
             return response()->json($requierment_info, 200);
         }

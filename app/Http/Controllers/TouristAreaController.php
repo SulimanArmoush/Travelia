@@ -55,10 +55,10 @@ class TouristAreaController extends Controller
         return response()->json(['touristArea'=> $touristArea,'message' => 'TouristArea created successfully'], 200);
     }
 
-    public function getTouristArea($TouristArea_id)
+    public function getTouristArea($touristArea_id)
     {
         try {
-            $touristArea = TouristArea::with('location')->findOrFail($TouristArea_id);
+            $touristArea = TouristArea::with('location')->findOrFail($touristArea_id);
             $touristArea->imgs = json_decode($touristArea->imgs);
             return response()->json($touristArea, 200);
         } catch (ModelNotFoundException $e) {
