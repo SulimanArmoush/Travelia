@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\TheWorld\TouristArea;
+use App\Traits\AreaImages;
 use App\Traits\FacilityCreateTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Traits\PhotoTrait;
 
 class TouristAreaController extends Controller
 {
-    use FacilityCreateTrait, PhotoTrait;
+    use FacilityCreateTrait,AreaImages;
 
     public function createArea(Request $request)
     {
@@ -42,7 +42,7 @@ class TouristAreaController extends Controller
             $request->city
         );
 
-        $images = $this->upload($request->imgs);
+        $images = $this->areaUpload($request->imgs);
 
         $touristArea = TouristArea::create([
             'name' => $request->name,
