@@ -19,10 +19,11 @@ class Trip extends Model
     protected $fillable = [
         'organizer_id',
         'cost',
-        'dateTime',
+        'strDate',
+        'endDate',
         'totalCapacity',
         'strLocation',
-        'imgs',
+        'img',
         'touristArea_id',
         'hotel_id',
         'restaurant_id',

@@ -28,6 +28,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::controller(FacilityController::class)->group(function () {
         Route::Post('createAccount', 'createAccount')->name('createAccount');
         Route::Post('imgUpload', 'imgUpload')->name('imgUpload');
+        Route::Get('getNearHotel/{area_id}', 'getNearHotel')->name('getNearHotel');
+        Route::Get('getNearRestaurant/{area_id}', 'getNearRestaurant')->name('getNearRestaurant');
+        Route::Get('getProfile', 'getProfile')->name('getProfile');
     });
 
     Route::controller(TransporterController::class)->group(function () {

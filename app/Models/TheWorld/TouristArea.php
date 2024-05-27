@@ -13,7 +13,7 @@ class TouristArea extends Model
     protected $fillable = [
         'name',
         'description',
-        'imgs',
+        'img',
         'location_id',
         'type'
     ] ;
