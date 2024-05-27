@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('organizer_id');
             $table->double('cost');
-            $table->dateTime('dateTime');
+            $table->date('strDate');
+            $table->date('endDate');
             $table->integer('totalCapacity');
-            $table->string('imgs');
+            $table->string('img');
             $table->unsignedBigInteger('strLocation');
             $table->unsignedBigInteger('touristArea_id');
-            $table->unsignedBigInteger('hotel_id');
-            $table->unsignedBigInteger('restaurant_id');
-            $table->unsignedBigInteger('transporter_id');
+            $table->unsignedBigInteger('hotel_id')->nullable();
+            $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->unsignedBigInteger('transporter_id')->nullable();
             $table->set('status', ['available','ongoing','finished'])->default('available');
 
             $table->timestamps();

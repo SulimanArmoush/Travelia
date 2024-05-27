@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class TouristAreaController extends Controller
 {
-    use FacilityCreateTrait,AreaImages;
+    use FacilityCreateTrait, AreaImages;
 
     public function createArea(Request $request)
     {
@@ -27,8 +27,7 @@ class TouristAreaController extends Controller
             'state' => ['required', 'string'],
             'city' => ['required', 'string'],
 
-            'imgs' => ['required','min:3', 'max:3'],
-            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'img' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -42,24 +41,22 @@ class TouristAreaController extends Controller
             $request->city
         );
 
-        $images = $this->areaUpload($request->imgs);
+        $image = $this->areaSaveImage($request->img);
 
-        $touristArea = TouristArea::create([
+        TouristArea::create([
             'name' => $request->name,
             'description' => $request->description,
             'type' => $request->type,
             'location_id' => $location->id,
-            'imgs' => $images
+            'img' => $image,
         ]);
-        $touristArea->imgs = json_decode($touristArea->imgs);
-        return response()->json(['touristArea'=> $touristArea,'message' => 'TouristArea created successfully'], 200);
+        return response()->json(['message' => 'TouristArea created successfully'], 200);
     }
 
     public function getTouristArea($touristArea_id)
     {
         try {
             $touristArea = TouristArea::with('location')->findOrFail($touristArea_id);
-            $touristArea->imgs = json_decode($touristArea->imgs);
             return response()->json($touristArea, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'TouristArea not Found'], 404);
@@ -68,15 +65,22 @@ class TouristAreaController extends Controller
 
     public function getTouristAreas()
     {
-        $touristAreas = TouristArea::with('location')->get();
-
+        $touristAreas = TouristArea::all();
         if ($touristAreas->isEmpty()) {
             return response()->json(['error' => 'TouristAreas not Found'], 404);
         }
-        foreach ($touristAreas as $touristArea) {
-            $touristArea->imgs = json_decode($touristArea->imgs);
+
+        $formattedAreas = [];
+        foreach ($touristAreas as $area) {
+            $formattedAreas[] = [
+                'id' => $area->id,
+                'name' => $area->name,
+                'type'=>$area->type,
+                'img'=>$area->img,
+                'country'=>$area->location->country
+            ];
         }
-        return response()->json(['touristAreas' => $touristAreas], 200);
+        return response()->json(['touristAreas' => $formattedAreas], 200);
     }
 
 }

@@ -11,15 +11,4 @@ trait AreaImages
 
         return $file_name;
     }
-
-    function areaUpload($imgs)
-    {
-        $array = [];
-        foreach ($imgs as $img) {
-            $imge = $this->areaSaveImage($img);
-            $array[] = $imge;
-        }
-        return json_encode($array);
-    }
-
 }
