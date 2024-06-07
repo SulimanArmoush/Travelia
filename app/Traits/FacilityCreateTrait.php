@@ -22,16 +22,16 @@ trait FacilityCreateTrait
     }
 
 
-    public function createFacility($name, $description, $location_id, $user_id ,$imgs)
+    public function createFacility($name, $description, $location_id, $user_id ,$img)
     {
-        $images = $this->upload($imgs);
+        $image = $this->saveImage($img);
 
         $facility = Facility::create([
             'name' => $name,
             'description' => $description,
             'location_id' => $location_id,
             'user_id' => $user_id,
-            'imgs' => $images
+            'img' => $image
         ]);
         return $facility;
     }

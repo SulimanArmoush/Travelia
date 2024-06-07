@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permissions\User;
 use App\Models\TheWorld\Facilities\Transporters\Routing;
 use App\Models\TheWorld\Facilities\Transporters\Transportation;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
 use App\Models\TheWorld\TouristArea;
-use App\Traits\DistanceTrait;
+use App\Traits\MyTrait;
 use App\Traits\FacilityCreateTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 
 class TransporterController extends Controller
 {
-    use FacilityCreateTrait, DistanceTrait;
+    use FacilityCreateTrait, MyTrait;
 
     public function createAirTransportations(Request $request)
     {
@@ -30,8 +31,7 @@ class TransporterController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        try {
-            $transporter = auth()->user()->facility->transporter->firstOrFail();
+            $transporter = auth()->user()->facility->transporter;
 
             if ($transporter->type != 'air') {
                 return response()->json(['error' => 'your not in airType'], 400);
@@ -58,9 +58,6 @@ class TransporterController extends Controller
                 }
             }
             return response()->json(['message' => 'Your Transportation created successfully'], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Transporter not Found'], 404);
-        }
     }
 
     public function createLandTransportations(Request $request)
@@ -79,9 +76,7 @@ class TransporterController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
         }
-
-        try {
-            $transporter = auth()->user()->facility->transporter->firstOrFail();
+            $transporter = auth()->user()->facility->transporter;
 
             if ($transporter->type != 'land') {
                 return response()->json(['error' => 'your not in landType'], 400);
@@ -119,9 +114,6 @@ class TransporterController extends Controller
             }
 
             return response()->json(['message' => 'Your Transportation created successfully'], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Transporter not Found'], 404);
-        }
     }
 
     public function getTransportation($transportation_id)
@@ -142,7 +134,7 @@ class TransporterController extends Controller
                 ->paginate(10);
 
             if ($transportations->isEmpty()) {
-                return response()->json(['error' => 'Transportations not Found'], 404);
+                return response()->json(['error' => 'Transportations not Found'], 200);
             }
             return response()->json($transportations, 200);
         } catch (ModelNotFoundException $e) {
@@ -159,7 +151,7 @@ class TransporterController extends Controller
                 ->paginate(10);
 
             if ($transportations->isEmpty()) {
-                return response()->json(['error' => 'Transportations not Found'], 404);
+                return response()->json(['error' => 'Transportations not Found'], 200);
             }
             return response()->json(['transportations' => $transportations], 200);
         } catch (ModelNotFoundException $e) {
@@ -217,7 +209,7 @@ class TransporterController extends Controller
             return response()->json(['message' => "Routing created successfully"], 200);
 
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Invalid foreign key"], 404);
+            return response()->json(['error' => "Invalid foreign key"], 404);
         }
     }
 
@@ -225,12 +217,10 @@ class TransporterController extends Controller
     {
         try {
             $route = Routing::with('location', 'transportation', 'touristArea.location')->findOrFail($route_id);
-            $route->touristArea->imgs = json_decode($route->touristArea->imgs);
-
             return response()->json(['route' => $route], 200);
 
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Routing Not Found"], 404);
+            return response()->json(['error' => "Routing Not Found"], 404);
         }
     }
 
@@ -247,7 +237,7 @@ class TransporterController extends Controller
         $routes = Routing::with('location', 'transportation', 'touristArea.location')->get();
 
         if ($routes->isEmpty()) {
-            return response()->json(['message' => "Routes Not Found"], 404);
+            return response()->json(['error' => "Routes Not Found"], 200);
         }
 
         $nearRoutes = [];
@@ -261,13 +251,12 @@ class TransporterController extends Controller
             );
 
             if ($dist <= 20.0) {
-                $route->touristArea->imgs = json_decode($route->touristArea->imgs);
                 $nearRoutes [] = $route;
             }
         }
 
         if (!$nearRoutes) {
-            return response()->json(['message' => "Routes Not Found"], 404);
+            return response()->json(['error' => "Routes Not Found"], 200);
         }
 
         return response()->json(['nearRoute' => $nearRoutes], 200);
@@ -283,15 +272,30 @@ class TransporterController extends Controller
                 ->with('location', 'transportation', 'touristArea.location')
                 ->get();
 
-            foreach ($routes as $route) {
-                $route->touristArea->imgs = json_decode($route->touristArea->imgs);
-            }
             return response()->json(['route' => $routes], 200);
 
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Transporter Not Found"], 404);
+            return response()->json(['error' => "Transporter Not Found"], 404);
         }
     }
 
+    public function getTransporters()
+    {
+        $users = User::where('role_id', '5')->where('confirmation', '2')->get();
+        if ($users->isEmpty()) {
+            return response()->json(['error' => 'Users not found'], 200);
+        }
+
+        $formatted = [];
+        foreach ($users as $user) {
+            $formatted[] = [
+                'id' => $user->facility->transporter->id,
+                'name' => $user->facility->name,
+                'type' => $user->facility->transporter->type,
+                'img' => $user->facility->img,
+            ];
+        }
+        return response()->json(['transporters' => $formatted], 200);
+    }
 
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tourist_areas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('description',1000);
             $table->string('img');
             $table->String('type');
             $table->unsignedBigInteger('location_id');

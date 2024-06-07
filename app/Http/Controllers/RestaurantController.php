@@ -79,7 +79,7 @@ class RestaurantController extends Controller
                 ->paginate(10);
 
             if ($tables->isEmpty()) {
-                return response()->json(['error' => 'Tables not Found'], 404);
+                return response()->json(['error' => 'Tables not Found'], 200);
             }
             return response()->json(['tables' => $tables], 200);
         } catch (ModelNotFoundException $e) {
@@ -96,7 +96,7 @@ class RestaurantController extends Controller
                 ->paginate(10);
 
             if ($tables->isEmpty()) {
-                return response()->json(['error' => 'Tables not Found'], 404);
+                return response()->json(['error' => 'Tables not Found'], 200);
             }
             return response()->json(['tables' => $tables], 200);
         } catch (ModelNotFoundException $e) {
