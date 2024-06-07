@@ -43,6 +43,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getRoute/{route_id}', 'getRoute')->name('getRoute');
         Route::Get('getNearRoute', 'getNearRoute')->name('getNearRoute');
         Route::Get('getOwnerRoutes/{transporter_id}', 'getOwnerRoutes')->name('getOwnerRoutes');
+        Route::Get('getTransporters', 'getTransporters')->name('getTransporters');
+
     });
     Route::controller(HotelController::class)->group(function () {
         Route::Post('createRooms', 'createRooms')->name('createRooms');
@@ -78,7 +80,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
     Route::controller(TouristAreaController::class)->group(function () {
         Route::Post('createArea', 'createArea')->name('createArea');
-        Route::Get('getTouristArea/{touristArea_id}', 'getTouristAreas')->name('getTouristAreas');
+        Route::Get('getTouristArea/{touristArea_id}', 'getTouristArea')->name('getTouristArea');
         Route::Get('getTouristAreas', 'getTouristAreas')->name('getTouristAreas');
     });
 });

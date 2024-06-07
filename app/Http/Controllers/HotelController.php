@@ -67,7 +67,7 @@ class HotelController extends Controller
             $room = Room::findOrFail($room_id);
             return response()->json($room, 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Room Not Found"], 404);
+            return response()->json(['error' => "Room Not Found"], 404);
         }
     }
 
@@ -80,11 +80,11 @@ class HotelController extends Controller
                 ->paginate(10);
 
             if ($rooms->isEmpty()) {
-                return response()->json(['message' => "Rooms Not Found"], 404);
+                return response()->json(['error' => "Rooms Not Found"], 200);
             }
             return response()->json(['rooms' => $rooms], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Hotel Not Found"], 404);
+            return response()->json(['error' => "Hotel Not Found"], 404);
         }
     }
 
@@ -97,11 +97,11 @@ class HotelController extends Controller
                 ->paginate(10);
 
             if ($rooms->isEmpty()) {
-                return response()->json(['message' => "Rooms Not Found"], 404);
+                return response()->json(['error' => "Rooms Not Found"], 200);
             }
             return response()->json(['rooms' => $rooms], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Hotel Not Found"], 404);
+            return response()->json(['error' => "Hotel Not Found"], 404);
         }
     }
 

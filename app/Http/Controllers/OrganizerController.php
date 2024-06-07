@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Organizers\Trip;
 use App\Models\TheWorld\TouristArea;
 use App\Traits\FacilityCreateTrait;
-use App\Traits\PhotoTrait;
+use App\Traits\MyTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class OrganizerController extends Controller
 {
-    use facilityCreateTrait, PhotoTrait;
+    use facilityCreateTrait, MyTrait;
 
     public function createTrip(Request $request)
     {
+        if (Auth::user()->role_id != 2) {
+            return response()->json(['error' => 'You are not a Trip Organizer'], 400);
+        }
         $validator = validator::make($request->all(), [
             'cost' => ['required', 'numeric'],
-            'strDate'=> ['required', 'date'],
-            'endDate'=> ['required', 'date'],
+            'strDate' => ['required', 'date'],
+            'endDate' => ['required', 'date'],
 
             'totalCapacity' => ['required', 'integer'],
 
@@ -43,6 +48,9 @@ class OrganizerController extends Controller
             $organizer = auth()->user()->facility->organizer->firstOrFail();
             $area = TouristArea::findOrFail($request->touristArea_id);
 
+            $hotel = Facility::findOrFail($request->hotel_id)->hotel;
+            $restaurant = Facility::findOrFail($request->restaurant_id)->restaurant;
+
             $location = $this->createLocation(
                 $request->latitude,
                 $request->longitude,
@@ -61,8 +69,8 @@ class OrganizerController extends Controller
                 'img' => $area->img,
                 'strLocation' => $location->id,
                 'touristArea_id' => $area->id,
-                'hotel_id' => $request->hotel_id,
-                'restaurant_id' => $request->restaurant_id,
+                'hotel_id' => $hotel->id,
+                'restaurant_id' => $restaurant->id,
                 'transporter_id' => $request->transporter_id,
             ]);
 
@@ -83,12 +91,6 @@ class OrganizerController extends Controller
                 'touristArea.location'
             )->findOrFail($trip_id);
 
-            $trip->imgs = json_decode($trip->imgs);
-            $trip->hotel->facility->imgs = json_decode($trip->hotel->facility->imgs);
-            $trip->restaurant->facility->imgs = json_decode($trip->restaurant->facility->imgs);
-            $trip->transporter->facility->imgs = json_decode($trip->transporter->facility->imgs);
-            $trip->touristArea->imgs = json_decode($trip->touristArea->imgs);
-
             return response()->json($trip, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Trip not Found'], 404);
@@ -99,7 +101,7 @@ class OrganizerController extends Controller
     {
         $trips = Trip::all();
         if ($trips->isEmpty()) {
-            return response()->json(['error' => 'Trips not Found'], 404);
+            return response()->json(['error' => 'Trips not Found'], 200);
         }
         return response()->json(['trips' => $trips], 200);
     }
@@ -108,16 +110,33 @@ class OrganizerController extends Controller
     {
         try {
             $organizer = Organizer::findOrFail($organizer_id);
-            $trips = Trip::where('organizer_id', $organizer->id)->get();
+            $trips = Trip::where('organizer_id', $organizer->id)
+                ->with('location', 'touristArea', 'hotel.facility', 'restaurant.facility', 'transporter.facility')
+                ->get();
 
             if ($trips->isEmpty()) {
-                return response()->json(['error' => 'Trips not Found'], 404);
+                return response()->json(['error' => 'Trips not Found'], 200);
             }
 
+            $format = [];
             foreach ($trips as $trip) {
-                $trip->imgs = json_decode($trip->imgs);
+                $format[] = [
+                    "id" => $trip->id,
+                    "organizer" => $trip->organizer->facility->name,
+                    "cost" => $trip->cost,
+                    "strDate" => $trip->strDate,
+                    "endDate" => $trip->endDate,
+                    "totalCapacity" => $trip->totalCapacity,
+                    "img" => $trip->img,
+                    "strLocation" => $trip->location->address,
+                    "touristArea" => $trip->touristArea->name,
+                    "hotel" => $trip->hotel->facility->name,
+                    "restaurant" => $trip->restaurant->facility->name,
+                    "transporter" => $trip->transporter->facility->name,
+                    "status" => $trip->status,
+                ];
             }
-            return response()->json(['trips' => $trips], 200);
+            return response()->json(['trips' => $format], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => "Organizer Not Found"], 404);
         }

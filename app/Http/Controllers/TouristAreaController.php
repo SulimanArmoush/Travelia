@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\TheWorld\TouristArea;
-use App\Traits\AreaImages;
+use App\Traits\MyTrait;
 use App\Traits\FacilityCreateTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TouristAreaController extends Controller
 {
-    use FacilityCreateTrait, AreaImages;
+    use FacilityCreateTrait, MyTrait;
 
     public function createArea(Request $request)
     {
@@ -67,7 +68,7 @@ class TouristAreaController extends Controller
     {
         $touristAreas = TouristArea::all();
         if ($touristAreas->isEmpty()) {
-            return response()->json(['error' => 'TouristAreas not Found'], 404);
+            return response()->json(['error' => 'TouristAreas not Found'], 200);
         }
 
         $formattedAreas = [];
@@ -75,12 +76,57 @@ class TouristAreaController extends Controller
             $formattedAreas[] = [
                 'id' => $area->id,
                 'name' => $area->name,
-                'type'=>$area->type,
-                'img'=>$area->img,
-                'country'=>$area->location->country
+                'type' => $area->type,
+                'img' => $area->img,
+                'country' => $area->location->country,
             ];
         }
-        return response()->json(['touristAreas' => $formattedAreas], 200);
+/*
+        // Create a manual paginator with all necessary information
+        $paginator = new LengthAwarePaginator(
+            $formattedAreas,
+            $touristAreas->total(),
+            $touristAreas->perPage(),
+            $touristAreas->currentPage(),
+            ['path' => url('api/getAllUsers')] // Set the base URL for pagination links
+        );
+
+        // Get the pagination information
+        $pagination = [
+            'current_page' => $paginator->currentPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
+            'first_page_url' => $paginator->url(1),
+            'last_page' => $paginator->lastPage(),
+            'last_page_url' => $paginator->url($paginator->lastPage()),
+            'links' => [
+                [
+                    'url' => $paginator->previousPageUrl(),
+                    'label' => '« Previous',
+                    'active' => false,
+                ],
+                [
+                    'url' => $paginator->url($paginator->currentPage()),
+                    'label' => $paginator->currentPage(),
+                    'active' => true,
+                ],
+                [
+                    'url' => $paginator->nextPageUrl(),
+                    'label' => 'Next »',
+                    'active' => false,
+                ],
+            ],
+            'next_page_url' => $paginator->nextPageUrl(),
+            'path' => $paginator->path(),
+            'prev_page_url' => $paginator->previousPageUrl(),
+            'to' => $paginator->lastItem(),
+        ];*/
+
+        return response()->json([
+            'touristAreas' => $formattedAreas,
+            //'pagination' => $pagination,
+        ], 200);
     }
+
 
 }

@@ -15,7 +15,7 @@ class AdminController extends Controller
     {
         $requierments = Requirement::all();
         if ($requierments->isEmpty()) {
-            return response()->json(['message' => "Requirements Not Found"], 404);
+            return response()->json(['error' => "Requirements Not Found"], 200);
         }
         return response()->json(['requierments' => $requierments], 200);
     }
@@ -28,7 +28,7 @@ class AdminController extends Controller
             return response()->json($requierment_info, 200);
         }
         catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Requirement Not Found"], 404);
+            return response()->json(['error' => "Requirement Not Found"], 404);
         }
     }
 
@@ -65,7 +65,7 @@ class AdminController extends Controller
         }
 
         catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Requirement or User Not Found"], 404);
+            return response()->json(['error' => "Requirement or User Not Found"], 404);
         }
     }
 }

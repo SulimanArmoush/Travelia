@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TheWorld\Facilities\Requirement;
 use App\Models\Permissions\Role;
 use App\Models\Permissions\User;
-use App\Traits\PhotoTrait;
+use App\Traits\MyTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule as ValidationRule;
 class AuthController extends Controller
 {
 
-    use PhotoTrait;
+    use MyTrait;
 
     public function register(Request $request)
     {
@@ -67,7 +67,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->all(), status: 422);
+            return response()->json($validator->errors()->all(), status: 400);
         }
 
         if (!Auth::attempt($request->only('email', 'password'))) {

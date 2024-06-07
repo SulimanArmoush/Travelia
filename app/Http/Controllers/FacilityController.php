@@ -8,9 +8,8 @@ use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
 use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\TouristArea;
-use App\Traits\DistanceTrait;
+use App\Traits\MyTrait;
 use App\Traits\FacilityCreateTrait;
-use App\Traits\PhotoTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +17,7 @@ use Illuminate\Http\Request;
 
 class FacilityController extends Controller
 {
-    use FacilityCreateTrait, PhotoTrait, DistanceTrait;
+    use FacilityCreateTrait, MyTrait ;
 
     public function createAccount(Request $request)
     {
@@ -38,8 +37,7 @@ class FacilityController extends Controller
             'state' => ['required', 'string'],
             'city' => ['required', 'string'],
 
-            'imgs' => ['min:3', 'max:3'],
-            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'img' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -58,7 +56,7 @@ class FacilityController extends Controller
             $request->description,
             $location->id,
             Auth::id(),
-            $request->imgs
+            $request->img
         );
 
         $roles = [
@@ -91,18 +89,17 @@ class FacilityController extends Controller
             'country'=>$facility->location->country,
             'wallet'=>$user->wallet,
             'photo'=>$user->photo,
-            'facilityPhoto'=> json_decode($facility->imgs),
+            'facilityPhoto'=> $facility->img,
         ], 200);
     }
 
     public function imgUpload(Request $request)
     {
-        if (!$request->hasFile('imgs')) {
+        if (!$request->hasFile('img')) {
             return response()->json(['error' => 'No images provided'], 400);
         }
         $validator = validator::make($request->all(), [
-            'imgs' => ['min:3', 'max:3'],
-            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+            'img' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
@@ -110,13 +107,13 @@ class FacilityController extends Controller
 
         $facility = auth()->user()->facility()->firstOrFail();
 
-        $images = $this->upload($request->imgs);
+        $image = $this->saveImage($request->img);
 
         $facility->update([
-            'imgs' => $images,
+            'img' => $image,
         ]);
 
-        return response()->json(['imgs' => json_decode($images), 'message' => 'Your images Added successfully'], 200);
+        return response()->json(['imgs' => $image, 'message' => 'Your images Added successfully'], 200);
     }
 
     public function getNearHotel($area_id)
@@ -133,16 +130,15 @@ class FacilityController extends Controller
                     $area->location->longitude,
                 );
                 if ($dist <= 20.0) {
-                    $hotel->facility->imgs = json_decode($hotel->facility->imgs);
                     $near [] = $hotel;
                 }
             }
             if (empty($near)) {
-                return response()->json(['message' => "near Not Found"], 404);
+                return response()->json(['error' => "near Not Found"], 200);
             }
             return response()->json(['near' => $near], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Area Not Found"], 404);
+            return response()->json(['error' => "Area Not Found"], 404);
         }
     }
     public function getNearRestaurant($area_id)
@@ -159,16 +155,15 @@ class FacilityController extends Controller
                     $area->location->longitude,
                 );
                 if ($dist <= 20.0) {
-                    $restaurant->facility->imgs = json_decode($restaurant->facility->imgs);
                     $near [] = $restaurant;
                 }
             }
             if (empty($near)) {
-                return response()->json(['message' => "near Not Found"], 404);
+                return response()->json(['error' => "near Not Found"], 200);
             }
             return response()->json(['near' => $near], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => "Area Not Found"], 404);
+            return response()->json(['error' => "Area Not Found"], 404);
         }
     }
 
