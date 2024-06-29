@@ -45,7 +45,7 @@ class OrganizerController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
         try {
-            $organizer = auth()->user()->facility->organizer->firstOrFail();
+            $organizer = auth()->user()->facility->organizer;
             $area = TouristArea::findOrFail($request->touristArea_id);
 
             $hotel = Facility::findOrFail($request->hotel_id)->hotel;
@@ -103,21 +103,39 @@ class OrganizerController extends Controller
         if ($trips->isEmpty()) {
             return response()->json(['error' => 'Trips not Found'], 200);
         }
-        return response()->json(['trips' => $trips], 200);
+
+        $format = [];
+        foreach ($trips as $trip) {
+            $format[] = [
+                "id" => $trip->id,
+                "organizer" => $trip->organizer->facility->name,
+                "cost" => $trip->cost,
+                "strDate" => $trip->strDate,
+                "endDate" => $trip->endDate,
+                "totalCapacity" => $trip->totalCapacity,
+                "img" => $trip->img,
+                "strLocation" => $trip->location->address,
+                "touristArea" => $trip->touristArea->name,
+                "hotel" => $trip->hotel->facility->name,
+                "restaurant" => $trip->restaurant->facility->name,
+                "transporter" => $trip->transporter->facility->name,
+                "status" => $trip->status,
+            ];
+        }
+
+        return response()->json(['trips' => $format], 200);
     }
 
-    public function getOrganizerTrips($organizer_id)
+    public function getOrganizerTrips()
     {
         try {
-            $organizer = Organizer::findOrFail($organizer_id);
+            $organizer = auth()->user()->facility->organizer;
             $trips = Trip::where('organizer_id', $organizer->id)
-                ->with('location', 'touristArea', 'hotel.facility', 'restaurant.facility', 'transporter.facility')
+                //->with('location', 'touristArea', 'hotel.facility', 'restaurant.facility', 'transporter.facility')
                 ->get();
-
             if ($trips->isEmpty()) {
                 return response()->json(['error' => 'Trips not Found'], 200);
             }
-
             $format = [];
             foreach ($trips as $trip) {
                 $format[] = [
@@ -136,9 +154,62 @@ class OrganizerController extends Controller
                     "status" => $trip->status,
                 ];
             }
+
             return response()->json(['trips' => $format], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => "Organizer Not Found"], 404);
         }
     }
+
+
+    public function organizerTrips()
+    {
+        try {
+            $organizer = auth()->user()->facility->organizer;
+            $trips = Trip::where('organizer_id', $organizer->id)
+                //->with('location', 'touristArea', 'hotel.facility', 'restaurant.facility', 'transporter.facility')
+                ->get();
+            if ($trips->isEmpty()) {
+                return response()->json(['error' => 'Trips not Found'], 200);
+            }
+            $pastTrips = [];
+            $currentTrips = [];
+            $upcomingTrips = [];
+
+            foreach ($trips as $trip) {
+                $formattedTrip = [
+                    "id" => $trip->id,
+                    "organizer" => $trip->organizer->facility->name,
+                    "cost" => $trip->cost,
+                    "strDate" => $trip->strDate,
+                    "endDate" => $trip->endDate,
+                    "totalCapacity" => $trip->totalCapacity,
+                    "img" => $trip->img,
+                    "strLocation" => $trip->location->address,
+                    "touristArea" => $trip->touristArea->name,
+                    "hotel" => $trip->hotel->facility->name,
+                    "restaurant" => $trip->restaurant->facility->name,
+                    "transporter" => $trip->transporter->facility->name,
+                    "status" => $trip->status,
+                ];
+
+                if ($trip->endDate < now()) {
+                    $pastTrips[] = $formattedTrip;
+                } elseif ($trip->strDate <= now() && $trip->endDate >= now()) {
+                    $currentTrips[] = $formattedTrip;
+                } else {
+                    $upcomingTrips[] = $formattedTrip;
+                }
+            }
+
+            return response()->json([
+                'pastTrips' => $pastTrips,
+                'currentTrips' => $currentTrips,
+                'upcomingTrips' => $upcomingTrips
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => "Organizer Not Found"], 404);
+        }
+    }
+
 }

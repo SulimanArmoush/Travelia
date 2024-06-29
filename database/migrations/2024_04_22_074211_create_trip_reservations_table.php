@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('trip_id');
             $table->integer('placeNum');
             $table->dateTime('dateTime');
+            $table->double('cost');
             $table->timestamps();
 
 

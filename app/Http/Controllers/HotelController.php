@@ -25,7 +25,7 @@ class HotelController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
         try {
-            $hotel = auth()->user()->facility->hotel->firstOrFail();
+            $hotel = auth()->user()->facility->hotel;
 
             if ($request->num1) {
                 for ($i = 0; $i < $request->num1; $i++) {
