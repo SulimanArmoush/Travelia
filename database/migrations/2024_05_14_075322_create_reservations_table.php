@@ -30,7 +30,6 @@ return new class extends Migration
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
             $table->foreign('table_id')->references('id')->on('tables')->onDelete('cascade');
             $table->foreign('routing_id')->references('id')->on('routings')->onDelete('cascade');
-
         });
     }
 

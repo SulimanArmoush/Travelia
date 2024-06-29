@@ -14,6 +14,7 @@ class TripReservation extends Model
     'trip_id',
     'placeNum',
     'dateTime',
+    'cost',
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

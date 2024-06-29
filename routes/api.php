@@ -31,6 +31,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getNearHotel/{area_id}', 'getNearHotel')->name('getNearHotel');
         Route::Get('getNearRestaurant/{area_id}', 'getNearRestaurant')->name('getNearRestaurant');
         Route::Get('getProfile', 'getProfile')->name('getProfile');
+        Route::Get('getFinances', 'getFinances')->name('getFinances');
+        Route::Post('makeContact', 'makeContact')->name('makeContact');
     });
 
     Route::controller(TransporterController::class)->group(function () {
@@ -62,6 +64,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getRequierments', 'getRequierments')->name('getRequierments');
         Route::Get('getRequierment/{requierment_id}', 'getRequierment')->name('getRequierment');
         Route::Post('handlingRequierment/{requierment_id}', 'handlingRequierment')->name('handlingRequierment');
+        Route::Get('getContact', 'getContact')->name('getContact');
     });
     Route::controller(UserController::class)->group(function () {
         Route::Get('getUser/{userId}', 'getUser')->name('getUser');
@@ -76,11 +79,13 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Post('createTrip', 'createTrip')->name('createTrip');
         Route::Get('getTrip/{trip_id}', 'getTrip')->name('getTrip');
         Route::Get('getTrips', 'getTrips')->name('getTrips');
-        Route::Get('getOrganizerTrips/{organizer_id}', 'getOrganizerTrips')->name('getOrganizerTrips');
+        Route::Get('getOrganizerTrips', 'getOrganizerTrips')->name('getOrganizerTrips');
+        Route::Get('organizerTrips', 'organizerTrips')->name('organizerTrips');
     });
     Route::controller(TouristAreaController::class)->group(function () {
         Route::Post('createArea', 'createArea')->name('createArea');
         Route::Get('getTouristArea/{touristArea_id}', 'getTouristArea')->name('getTouristArea');
         Route::Get('getTouristAreas', 'getTouristAreas')->name('getTouristAreas');
+        Route::Get('getAreas', 'getAreas')->name('getAreas');
     });
 });

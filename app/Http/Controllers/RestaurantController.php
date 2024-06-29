@@ -26,7 +26,7 @@ class RestaurantController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
         try {
-            $restaurant = auth()->user()->facility->restaurant->firstOrFail();
+            $restaurant = auth()->user()->facility->restaurant;
 
             if ($request->num1) {
                 for ($i = 0; $i < $request->num1; $i++) {

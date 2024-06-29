@@ -3,6 +3,7 @@
 namespace App\Models\Permissions;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Finance;
 use App\Models\TheWorld\Facilities\Requirement;
 use App\Models\TheWorld\Facilities\Reservation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-use App\Models\TheWorld\Facilities\Hotels\HotelReservation;
-use App\Models\TheWorld\Facilities\Restaurants\RestaurantReservation;
-use App\Models\TheWorld\Facilities\Transporters\TransporterReservation;
+
 use App\Models\TheWorld\Facilities\Organizers\TripReservation;
 use App\Models\TheWorld\Facilities\Facility;
 
@@ -96,5 +95,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Requirement::class);
     }
-
+    public function finance()
+    {
+        return $this->hasMany(Finance::class);
+    }
 }

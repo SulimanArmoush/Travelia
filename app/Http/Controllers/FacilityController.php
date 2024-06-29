@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
+use App\Models\Finance;
 use App\Models\TheWorld\Facilities\Hotels\Hotel;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Restaurants\Restaurant;
@@ -105,7 +107,7 @@ class FacilityController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        $facility = auth()->user()->facility()->firstOrFail();
+        $facility = auth()->user()->facility;
 
         $image = $this->saveImage($request->img);
 
@@ -167,4 +169,40 @@ class FacilityController extends Controller
         }
     }
 
+    public function getFinances()
+    {
+        $fins = Finance::where('to',Auth::id())->get();
+        if ($fins->isEmpty()) {
+            return response()->json(['error' => "Report is Empty"], 200);
+        }
+        $format = [];
+        foreach ($fins as $fin) {
+            $format[] = [
+                'id' => $fin->id,
+                'Description' => $fin->Description,
+                'name' => $fin->fromUser->firstName .' '. $fin->fromUser->lastName,
+                'from' => $fin->fromUser->email,
+                'Intake' => $fin->Intake,
+                'Expense' => $fin->Expense,
+            ];
+        }
+        return response()->json(['Report' => $format], 200);
+    }
+
+    public function makeContact(Request $request)
+    {
+        $validator = validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:255'],
+            'msg' => ['required', 'string', 'max:255'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all(), status: 400);
+        }
+         Contact::create([
+            'from'=> Auth::id(),
+            'title' => $request->title,
+            'msg' => $request->msg,
+        ]);
+        return response()->json(['message' => "your massage sended successfully"], 200);
+    }
 }

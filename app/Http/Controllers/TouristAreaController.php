@@ -81,52 +81,21 @@ class TouristAreaController extends Controller
                 'country' => $area->location->country,
             ];
         }
-/*
-        // Create a manual paginator with all necessary information
-        $paginator = new LengthAwarePaginator(
-            $formattedAreas,
-            $touristAreas->total(),
-            $touristAreas->perPage(),
-            $touristAreas->currentPage(),
-            ['path' => url('api/getAllUsers')] // Set the base URL for pagination links
-        );
-
-        // Get the pagination information
-        $pagination = [
-            'current_page' => $paginator->currentPage(),
-            'per_page' => $paginator->perPage(),
-            'total' => $paginator->total(),
-            'first_page_url' => $paginator->url(1),
-            'last_page' => $paginator->lastPage(),
-            'last_page_url' => $paginator->url($paginator->lastPage()),
-            'links' => [
-                [
-                    'url' => $paginator->previousPageUrl(),
-                    'label' => '« Previous',
-                    'active' => false,
-                ],
-                [
-                    'url' => $paginator->url($paginator->currentPage()),
-                    'label' => $paginator->currentPage(),
-                    'active' => true,
-                ],
-                [
-                    'url' => $paginator->nextPageUrl(),
-                    'label' => 'Next »',
-                    'active' => false,
-                ],
-            ],
-            'next_page_url' => $paginator->nextPageUrl(),
-            'path' => $paginator->path(),
-            'prev_page_url' => $paginator->previousPageUrl(),
-            'to' => $paginator->lastItem(),
-        ];*/
-
-        return response()->json([
+       return response()->json([
             'touristAreas' => $formattedAreas,
-            //'pagination' => $pagination,
         ], 200);
     }
 
+    public function getAreas()
+    {
+        $areas = TouristArea::with('location')->get();
+        if ($areas->isEmpty()) {
+            return response()->json(['error' => 'TouristAreas not Found'], 200);
+        }
+
+        return response()->json([
+            'Areas' => $areas,
+        ], 200);
+    }
 
 }
