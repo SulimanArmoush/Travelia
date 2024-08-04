@@ -80,27 +80,25 @@ class AuthController extends Controller
 
         $role = Role::find($user->role_id);
 
+
+        if ($user->role_id == 6) {
+            $validator = validator::make($request->all(), [
+                'token' => ['required', 'string'],
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->all(), status: 400);
+            }
+            if ($user->deviceToken != $request->token) {
+                $user->update(['deviceToken' => $request->token]);
+            }
+        }
+
         $data['user'] = $user;
         $data['token_type'] = 'Bearer';
         $data['access_token'] = $tokenResult->accessToken;
         $data['role'] = $role;
 
         return response()->json(['data' => $data, 'message' => 'logged In successfully']);
-    }
-
-    public function createDeviceToken(Request $request): JsonResponse
-    {
-        $validator = validator::make($request->all(), [
-            'token' => ['required', 'string'],
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->all(), status: 400);
-        }
-
-        $user = Auth::user();
-        $user->update(['deviceToken' => $request->token]);
-
-        return response()->json(['message' => 'deviceToken sended successfully']);
     }
 
     public function logout(Request $request): JsonResponse

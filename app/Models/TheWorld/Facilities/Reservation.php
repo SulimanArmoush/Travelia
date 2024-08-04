@@ -43,7 +43,7 @@ class Reservation extends Model
         return $this->belongsTo(Routing::class);
     }
 
-    public function restaurantReservation(): HasMany
+    public function restaurantReservations(): HasMany
     {
         return $this->hasMany(RestaurantReservation::class);
     }

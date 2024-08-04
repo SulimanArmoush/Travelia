@@ -208,9 +208,9 @@ class TransporterController extends Controller
             ]);
         }
 
-        if ($dist > 500.0 && $transporter->type == 'land') {
+        if ($dist > 2000.0 && $transporter->type == 'land') {
             return response()->json([
-                'error' => 'بدك تمشي بالباص اكتر من 500 كيلومتر ؟؟؟؟'
+                'error' => 'بدك تمشي بالباص اكتر من 2000 كيلومتر ؟؟؟؟'
             ]);
         }
 
@@ -545,7 +545,7 @@ class TransporterController extends Controller
             if ($dist < 200.0 && $user->facility->transporter->type == 'air') {
                 continue;
             }
-            if ($dist > 500.0 && $user->facility->transporter->type == 'land') {
+            if ($dist > 2000.0 && $user->facility->transporter->type == 'land') {
                 continue;
             }
 

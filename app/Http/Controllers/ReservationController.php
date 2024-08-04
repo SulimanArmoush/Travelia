@@ -17,14 +17,17 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\NotificationTrait;
 
 class ReservationController extends Controller
 {
+    use NotificationTrait;
+
     public function tripBooking(Request $request, $trip_id): JsonResponse
     {
         $user = Auth::user();
         $trip = Trip::find($trip_id);
-        if(!$trip){
+        if (!$trip) {
             return response()->json(['error' => 'Trip not found']);
         }
 
@@ -37,13 +40,13 @@ class ReservationController extends Controller
 
         $cost = $request->placeNum * $trip->cost;
 
-        if($cost > $user->wallet){
+        if ($cost > $user->wallet) {
             return response()->json(['error' => 'you dont have money']);
         }
-        if(($trip->totalCapacity - $trip->capacity) < $request->placeNum){
+        if (($trip->totalCapacity - $trip->capacity) < $request->placeNum) {
             return response()->json(['error' => 'Not enough places']);
         }
-        if($trip->strDate < now()){
+        if ($trip->strDate < now()) {
             return response()->json(['error' => 'Missed trip']);
         }
 
@@ -55,29 +58,31 @@ class ReservationController extends Controller
         ]);
 
         $before = $trip->organizer->facility->user->wallet;
-        $trip->organizer->facility->user->increment('wallet',$cost);
+        $trip->organizer->facility->user->increment('wallet', $cost);
         $after = $trip->organizer->facility->user->wallet;
         $trip->increment('capacity', $request->placeNum);
-        $user->decrement('wallet',$cost);
+        $user->decrement('wallet', $cost);
 
         Finance::create([
             'from' => $user->id,
             'to' => $trip->organizer->facility->user->id,
-            'before'=> $before,
-            'after'=> $after,
+            'before' => $before,
+            'after' => $after,
             'Intake' => $cost,
-            'Description' => 'for booking '.$request->placeNum.' person on a trip' ,
+            'Description' => 'for booking ' . $request->placeNum . ' person on a trip',
         ]);
+
+        $this->send($user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
 
         return response()->json([
             'message' => "Your reservation has been completed successfully",
-            'remaining time'=> Carbon::parse($trip->strDate)->diffForHumans(now()),
+            'remaining time' => Carbon::parse($trip->strDate)->diffForHumans(now()),
         ]);
     }
 
     public function getReservation($trip_id): JsonResponse
     {
-        $reservations = TripReservation::where('trip_id',$trip_id)->get();
+        $reservations = TripReservation::where('trip_id', $trip_id)->get();
         if ($reservations->isEmpty()) {
             return response()->json(['error' => 'Reservations not Found']);
         }
@@ -85,7 +90,7 @@ class ReservationController extends Controller
         foreach ($reservations as $reservation) {
             $format[] = [
                 'id' => $reservation->id,
-                'name' => $reservation->user->firstName.' '.$reservation->user->lastName,
+                'name' => $reservation->user->firstName . ' ' . $reservation->user->lastName,
                 'email' => $reservation->user->email,
                 'phone' => $reservation->user->phone,
                 'age' => $reservation->user->age,
@@ -100,14 +105,14 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function booking(Request $request):JsonResponse
+    public function booking(Request $request): JsonResponse
     {
         $user = Auth::user();
         $validator = validator::make($request->all(), [
-            'placeNum'   => ['required', 'integer'],
-            'strDate'   => ['required', 'date'],
-            'endDate'    => ['required', 'date'],
-            'hotel_id'    => ['required', 'integer'],
+            'placeNum' => ['required', 'integer'],
+            'strDate' => ['required', 'date'],
+            'endDate' => ['required', 'date'],
+            'hotel_id' => ['required', 'integer'],
             'room_type' => ['required', 'string'],
             'routing_id' => ['required', 'integer'],
         ]);
@@ -116,7 +121,7 @@ class ReservationController extends Controller
         }
 
         $hotel = Hotel::find($request->hotel_id);
-        if(!$hotel){
+        if (!$hotel) {
             return response()->json(['error' => 'Hotel not found']);
         }
 
@@ -135,7 +140,6 @@ class ReservationController extends Controller
             })
             ->get();
 
-        // التحقق من توفر الغرف.
         if ($availableRooms->isEmpty()) {
             return response()->json(['error' => 'No available rooms of the specified type found for the given date range.']);
         }
@@ -144,11 +148,11 @@ class ReservationController extends Controller
 
 
         $rout = Routing::find($request->routing_id);
-        if(!$rout){
+        if (!$rout) {
             return response()->json(['error' => 'Rout not found']);
         }
 
-        if(($rout->transportation->totalCapacity - $rout->capacity) < $request->placeNum){
+        if (($rout->transportation->totalCapacity - $rout->capacity) < $request->placeNum) {
             return response()->json(['error' => 'Not enough places']);
         }
 
@@ -163,7 +167,7 @@ class ReservationController extends Controller
         $roomCost = $room->cost * $daysNum;
         $routCost = $request->placeNum * $rout->cost;
         $cost = $routCost + $roomCost;
-        if($cost > $user->wallet){
+        if ($cost > $user->wallet) {
             return response()->json(['error' => 'you dont have money']);
         }
 
@@ -177,7 +181,7 @@ class ReservationController extends Controller
             'cost' => $cost,
         ]);
 
-        $user->decrement('wallet' , $cost);
+        $user->decrement('wallet', $cost);
         $hotelBefore = $room->hotel->facility->user->wallet;
         $transporterBefore = $rout->transportation->transporter->facility->user->wallet;
         $room->hotel->facility->user->increment('wallet', $roomCost);
@@ -190,23 +194,26 @@ class ReservationController extends Controller
         Finance::create([
             'from' => $user->id,
             'to' => $room->hotel->facility->user->id,
-            'before'=> $hotelBefore,
-            'after'=> $hotelAfter,
+            'before' => $hotelBefore,
+            'after' => $hotelAfter,
             'Intake' => $roomCost,
-            'Description' => 'for booking '.$room->type,
+            'Description' => 'for booking ' . $room->type,
         ]);
         Finance::create([
             'from' => $user->id,
             'to' => $rout->transportation->transporter->facility->user->id,
-            'before'=> $transporterBefore,
-            'after'=> $transporterAfter,
+            'before' => $transporterBefore,
+            'after' => $transporterAfter,
             'Intake' => $routCost,
-            'Description' => 'for booking for '.$request->placeNum.' person on a route' ,
+            'Description' => 'for booking for ' . $request->placeNum . ' person on a route',
         ]);
+
+        $this->send($user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
+
 
         return response()->json([
             'message' => "Your reservation has been completed successfully",
-            'remaining time'=> $startDate->diffForHumans(now()),
+            'remaining time' => $startDate->diffForHumans(now()),
         ]);
     }
 
@@ -262,7 +269,7 @@ class ReservationController extends Controller
             return response()->json(['error' => 'Table booking time must be within the main reservation period']);
         }
 
-        $cost = $table->cost ;
+        $cost = $table->cost;
         if ($cost > $reservation->user->wallet) {
             return response()->json(['error' => 'you dont have money']);
         }
@@ -282,11 +289,13 @@ class ReservationController extends Controller
         Finance::create([
             'from' => $reservation->user->id,
             'to' => $table->restaurant->facility->user->id,
-            'before'=>$before ,
-            'after'=> $after,
+            'before' => $before,
+            'after' => $after,
             'Intake' => $cost,
             'Description' => 'for booking ' . $table->type,
         ]);
+
+        $this->send($reservation->user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
 
         return response()->json([
             'message' => "Your Table has been reserved successfully",
@@ -294,4 +303,81 @@ class ReservationController extends Controller
         ]);
     }
 
+
+    public function getUserTripBooking(): JsonResponse
+    {
+        $user = Auth::user();
+        $formatted = collect();
+        foreach ($user->tripReservations as $reservation) {
+            $formatted->push([
+                'trip_id'=>$reservation->trip->id,
+                'organizerName' => $reservation->trip->organizer->facility->name,
+                'organizerImg' => $reservation->trip->organizer->facility->img,
+                'organizerAddress' => $reservation->trip->organizer->facility->location->address,
+                'tripImg' => $reservation->trip->img,
+                'strDate' => $reservation->trip->strDate,
+                'endDate' => $reservation->trip->endDate,
+                'tripCost' => $reservation->trip->cost,
+                'capacity' => $reservation->trip->capacity . '/' . $reservation->trip->totalCapacity,
+                'reservationPlaceNum' => $reservation->placeNum,
+                'reservationCost' => $reservation->cost,
+            ]);
+        }
+
+        if ($formatted->isEmpty()) {
+            return response()->json(['error' => 'Reservations Not Found']);
+
+        }
+        return response()->json(['Reservations' => $formatted]);
+    }
+
+
+    public function getUserBooking(): JsonResponse
+    {
+        $user = Auth::user();
+        $formatted = collect();
+        foreach ($user->reservations as $reservation) {
+            $reservationDetails = [
+                'strDate' => $reservation->strDate,
+                'endDate' => $reservation->endDate,
+                'daysNumber' => Carbon::parse($reservation->strDate)->diffInDays(Carbon::parse($reservation->endDate))+1,
+                'placeNum' => $reservation->placeNum,
+                'cost' => $reservation->cost,
+                'address' => $reservation->room->hotel->facility->location->address ,
+
+                'hotel' => $reservation->room->hotel->facility->name,
+                'hotelImg' => $reservation->room->hotel->facility->img,
+                'room' => $reservation->room->type,
+                'roomCost' => $reservation->room->cost,
+
+                'transporter' => $reservation->routing->transportation->transporter->facility->name,
+                'transporterImg' => $reservation->routing->transportation->transporter->facility->img,
+                'transportation' => $reservation->routing->transportation->type,
+                'strLocation' => $reservation->routing->startLocation->address,
+                'endLocation' => $reservation->routing->endedLocation->address,
+                'routCost' => $reservation->routing->cost,
+                'routCapacity' => $reservation->routing->capacity . '/' .$reservation->routing->transportation->totalCapacity ,
+
+                'restaurants' => collect()
+            ];
+
+            foreach ($reservation->restaurantReservations as $restaurantReservation) {
+                $reservationDetails['restaurants']->push([
+                    'restaurant' => $restaurantReservation->table->restaurant->facility->name,
+                    'restaurantImg' => $restaurantReservation->table->restaurant->facility->img,
+                    'table' => $restaurantReservation->table->type,
+                    'tableCost' => $restaurantReservation->table->cost,
+                    'restaurantDateTime' => $restaurantReservation->DateTime,
+                ]);
+            }
+
+            $formatted->push($reservationDetails);
+        }
+
+        if ($formatted->isEmpty()) {
+            return response()->json(['error' => 'Reservations Not Found']);
+
+        }
+        return response()->json(['Reservations' => $formatted]);
+    }
 }

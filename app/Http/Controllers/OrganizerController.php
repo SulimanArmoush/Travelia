@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permissions\User;
 use App\Models\TheWorld\Facilities\Facility;
+use App\Models\TheWorld\Facilities\Favorite;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Organizers\Trip;
 use App\Models\TheWorld\Facilities\Transporters\Transporter;
@@ -13,10 +15,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\NotificationTrait;
 
 class OrganizerController extends Controller
 {
-    use facilityCreateTrait, MyTrait;
+    use facilityCreateTrait, MyTrait , NotificationTrait;
+
 
     public function createTrip(Request $request): JsonResponse
     {
@@ -63,9 +67,9 @@ class OrganizerController extends Controller
                 'error' => 'How Would You Like To Use A Plane And Your Distance Is Lower Than 200 KM'
             ]);
         }
-        if ($dist > 500.0 && $transporter->type == 'land') {
+        if ($dist > 2000.0 && $transporter->type == 'land') {
             return response()->json([
-                'error' => 'بدك تمشي بالباص 500 كيلومتر ؟؟!!(:!!؟؟'
+                'error' => 'بدك تمشي بالباص 2000 كيلومتر ؟؟!!(:!!؟؟'
             ]);
         }
 
@@ -101,6 +105,17 @@ class OrganizerController extends Controller
             'restaurant_id' => $restaurant->id,
             'transporter_id' => $transporter->id,
         ]);
+
+        $users = Favorite::where('organizer_id', $organizer->id)
+            ->pluck('user_id');
+
+        foreach ($users as $user_id) {
+            $user = User::find($user_id);
+            if ($user) {
+                $this->send($user->deviceToken,'new trip from ' . $organizer->facility->name ,
+                    'A new trip to ' . $area->name . ' has been added');
+            }
+        }
 
         return response()->json(['message' => 'Your Trip created successfully']);
     }

@@ -37,7 +37,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getContact', 'getContact')->name('getContact');
         Route::Get('getTransferRequests', 'getTransferRequests')->name('getTransferRequests');
         Route::Post('handlingTransferRequests/{requierment_id}', 'handlingTransferRequests')->name('handlingTransferRequests');
-
+        Route::Post('sendMassage', 'sendMassage')->name('sendMassage');
     });
     Route::controller(FacilityController::class)->group(function () {
         Route::Post('createAccount', 'createAccount')->name('createAccount');
@@ -70,6 +70,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getReservation/{trip_id}', 'getReservation')->name('getReservation');
         Route::Post('booking', 'booking')->name('booking');
         Route::Post('restaurantBooking/{reservation_id}', 'restaurantBooking')->name('restaurantBooking');
+        Route::Get('getUserTripBooking', 'getUserTripBooking')->name('getUserTripBooking');
+        Route::Get('getUserBooking', 'getUserBooking')->name('getUserBooking');
     });
     Route::controller(RestaurantController::class)->group(function () {
         Route::Post('createTables', 'createTables')->name('createTables');
@@ -109,9 +111,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Post('transferRequest', 'transferRequest')->name('transferRequest');
         Route::Post('addToFav/{organizer_id}', 'addToFav')->name('addToFav');
         Route::Delete('removeFromFav/{organizer_id}', 'removeFromFav')->name('removeFromFav');
+        Route::Get('getFav', 'getFav')->name('getFav');
     });
     //});
 });
 
 
-Route::post('testSend/{token}', [UserController::class, 'testSend']);
+//Route::post('testSend/{token}', [UserController::class, 'testSend']);

@@ -27,8 +27,8 @@ class Organizer extends Model
         return $this->hasMany(Trip::class);
     }
 
-    public function fans():BelongsToMany
+    public function favorites():BelongsToMany
     {
-        return $this->belongsToMany(User::class , 'favorites');
+        return $this->belongsToMany(Organizer::class, 'favorites');
     }
 }

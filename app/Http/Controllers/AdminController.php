@@ -9,9 +9,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Permissions\User;
+use App\Traits\NotificationTrait;
 
 class AdminController extends Controller
 {
+    use NotificationTrait;
+
     public function getRequierments(): JsonResponse
     {
         $requierments = Requirement::all();
@@ -131,7 +134,7 @@ class AdminController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->all(),400);
+            return response()->json($validator->errors()->all(), 400);
         }
 
         $requierment = Requirement::find($requierment_id);
@@ -148,9 +151,33 @@ class AdminController extends Controller
 
         if ($request->status == 'accept') {
             $user->increment('wallet', $requierment->amount);
+
+            $this->send($user->deviceToken, 'Balance charge',
+                'Your request has been accepted, your account has been charged with ' . $requierment->amount . ', and you now have' . $user->wallet);
+
             return response()->json(['message' => "You have accepted this request"]);
         }
 
+        $this->send($user->deviceToken, 'Balance charge', 'Your request was rejected, your balance is now' . $user->wallet);
         return response()->json(['message' => "You have reject this request"]);
+    }
+
+    public function sendMassage(Request $request): JsonResponse
+    {
+        $validator = validator::make($request->all(), [
+            'title' => ['required', 'string'],
+            'body' => ['required', 'string']
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all(), 400);
+        }
+
+        $users = User::where('role_id', 6)->get();
+
+        foreach ($users as $user) {
+            $this->send($user->deviceToken, $request->title, $request->body);
+        }
+        return response()->json(['message' => "You have send a massage for all tourists"]);
+
     }
 }

@@ -146,11 +146,15 @@ class UserController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
+        $user = Auth::id();
         Requirement::create([
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'note' => 'Accept the transfer request with the required value',
             'amount' => $request->amount
         ]);
+
+        $this->send($user->deviceToken,'Balance charge',
+            'Your request has been sent successfully. You will receive a message when the process is successful');
 
         return response()->json(['massage' => 'your request is being verified']);
 
@@ -205,15 +209,40 @@ class UserController extends Controller
         return response()->json(['message' => 'This Account is not in your favorites']);
     }
 
-
-
-
-
-
-
-    public function testSend($token): JsonResponse
+    public function getFav(): JsonResponse
     {
-        return response()->json(['message' => $this->send($token,'Hi','Ih')]);
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'User Not Found']);
+        }
+
+        $favorites = $user->favorites;
+        if (empty($favorites)) {
+            return response()->json(['error' => 'Organizer Not Found']);
+        }
+
+        $formatted = collect();;
+        foreach ($favorites as $favorite) {
+            $formatted->push([
+                'id' => $favorite->id,
+                'name' => $favorite->facility->name,
+                'description' => $favorite->facility->description,
+                'img' => $favorite->facility->img,
+                'type' => $favorite->type,
+                'email' => $favorite->facility->user->email,
+                'photo' => $favorite->facility->user->photo,
+            ]);
+        }
+        return response()->json(['favorites' => $formatted]);
     }
+
+
+
+/*    public function testSend($token):String
+    {
+            return $this->send($token,
+                'شو ما كان','كان ياما كان');
+    }*/
+
 }
 

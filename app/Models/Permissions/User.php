@@ -56,7 +56,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deviceToken'
     ];
 
     /**
@@ -93,9 +94,9 @@ class User extends Authenticatable
         return $this->hasOne(Facility::class)->with('location');
     }
 
-    public function favorites():hasManyThrough
+    public function favorites():BelongsToMany
     {
-        return $this->hasManyThrough(Organizer::class, 'favorites');
+        return $this->belongsToMany(Organizer::class, 'favorites');
     }
 
     public function recuirement():hasOne

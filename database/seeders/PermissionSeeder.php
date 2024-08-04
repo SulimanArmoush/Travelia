@@ -88,6 +88,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'handlingTransferRequests'],//63
             ['name' => 'addToFav'],//64
             ['name' => 'removeFromFav'],//65
+            ['name' => 'getFav'],//66
+            ['name' => 'getUserTripBooking'],//67
+            ['name' => 'getUserBooking'],//68
+            ['name' => 'sendMassage'],//69
+
+
         ];
         Role::insert($roles);
         Permission::insert($permissions);
