@@ -147,7 +147,7 @@ class ReservationController extends Controller
                 'address' => $reservation->user->address,
                 'photo' => $reservation->user->photo,
                 'placeNum' => $reservation->placeNum,
-                'cost' => $reservation->cost
+                'cost' => intval($reservation->cost)
             ];
         }
         return response()->json([
@@ -556,7 +556,7 @@ class ReservationController extends Controller
                 'endDate' => $reservation->endDate,
                 'daysNumber' => Carbon::parse($reservation->strDate)->diffInDays(Carbon::parse($reservation->endDate)) + 1,
                 'placeNum' => $reservation->placeNum,
-                'cost' => $reservation->cost,
+                'cost' => intval($reservation->cost),
 
                 'hotel' => $reservation->room->hotel->facility->name,
                 'hotelImg' => $reservation->room->hotel->facility->img,

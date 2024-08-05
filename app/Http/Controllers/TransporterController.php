@@ -374,7 +374,7 @@ class TransporterController extends Controller
                 'dateTime' => Carbon::parse($route->dateTime)->format('Y-m-d'),
                 'totalCapacity' => $route->transportation->totalCapacity,
                 'availableCapacity' => ($route->transportation->totalCapacity - $route->capacity),
-                'cost' => $route->cost,
+                'cost' => intval($route->cost),
                 'distance' => $dist
             ]);
         }

@@ -16,6 +16,6 @@ trait NotificationTrait
         $message = CloudMessage::withTarget('token', $deviceToken)
             ->withNotification($notification);
 
-        //$messaging->send($message);
+        $messaging->send($message);
     }
 }

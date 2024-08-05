@@ -179,7 +179,7 @@ class HotelController extends Controller
             $formattedList->push([
                 'id' => $item->id,
                 'room' => $item->room->type,
-                'cost' => $roomCost,
+                'cost' => intval($roomCost),
                 'strDate' => Carbon::parse($item->strDate)->format('Y-m-d'),
                 'endDate' => Carbon::parse($item->endDate)->format('Y-m-d'),
                 'daysNum' => $daysNum,

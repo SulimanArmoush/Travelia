@@ -188,9 +188,9 @@ class FacilityController extends Controller
                 'Description' => $fin->Description,
                 'name' => $fin->fromUser->firstName . ' ' . $fin->fromUser->lastName,
                 'from' => $fin->fromUser->email,
-                'Intake' => $fin->Intake,
-                'before' => $fin->before,
-                'after' => $fin->after,
+                'Intake' => intval($fin->Intake),
+                'before' => intval($fin->before),
+                'after' => intval($fin->after),
                 'Date' => $fin->created_at->format('d-m-Y')
             ];
         }
