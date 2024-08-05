@@ -3,6 +3,7 @@
 namespace App\Models\Permissions;
 
 use App\Models\Finance;
+use App\Models\Not;
 use App\Models\TheWorld\Facilities\Organizers\Organizer;
 use App\Models\TheWorld\Facilities\Requirement;
 use App\Models\TheWorld\Facilities\Reservation;
@@ -108,4 +109,9 @@ class User extends Authenticatable
         return $this->hasMany(Finance::class , 'to');
     }
 
+    public function notifications():hasMany
+    {
+        return $this->hasMany(Not::class);
+
+    }
 }

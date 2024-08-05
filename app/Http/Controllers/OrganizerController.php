@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Finance;
+use App\Models\Not;
 use App\Models\Permissions\User;
 use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\Facilities\Favorite;
@@ -11,6 +13,7 @@ use App\Models\TheWorld\Facilities\Transporters\Transporter;
 use App\Models\TheWorld\TouristArea;
 use App\Traits\FacilityCreateTrait;
 use App\Traits\MyTrait;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +22,7 @@ use App\Traits\NotificationTrait;
 
 class OrganizerController extends Controller
 {
-    use facilityCreateTrait, MyTrait , NotificationTrait;
+    use facilityCreateTrait, MyTrait, NotificationTrait;
 
 
     public function createTrip(Request $request): JsonResponse
@@ -112,12 +115,64 @@ class OrganizerController extends Controller
         foreach ($users as $user_id) {
             $user = User::find($user_id);
             if ($user) {
-                $this->send($user->deviceToken,'new trip from ' . $organizer->facility->name ,
+                $this->send($user->deviceToken, 'new trip from ' . $organizer->facility->name,
                     'A new trip to ' . $area->name . ' has been added');
+
+                Not::create([
+                    'user_id' => $user->id,
+                    'title' => 'new trip from ' . $organizer->facility->name,
+                    'body' => 'A new trip to ' . $area->name . ' has been added',
+                ]);
             }
         }
 
         return response()->json(['message' => 'Your Trip created successfully']);
+    }
+
+    public function deleteTrip($trip_id): JsonResponse
+    {
+        $trip = Trip::find($trip_id);
+        if(!$trip){
+            return response()->json(['error'=>'Trip Not Found']);
+        }
+
+        $organizer = $trip->organizer->facility->user;
+        if ($organizer->id != Auth::id()) {
+            return response()->json(['error' => 'this trip is not belongs to you']);
+        }
+
+        if (Carbon::now()->greaterThan(Carbon::parse($trip->strDate)->subDay())) {
+            return response()->json(['error' => 'you cant delete this trip after now']);
+        }
+
+        foreach ($trip->tripReservations as $reservation){
+
+            $before = $organizer->wallet;
+            $organizer->decrement('wallet', $reservation->cost);
+            $after = $organizer->wallet;
+
+            $reservation->user->increment('wallet', $reservation->cost);
+
+            Finance::create([
+                'from' => $reservation->user->id,
+                'to' => $organizer->id,
+                'before' => $before,
+                'after' => $after,
+                'Intake' => $reservation->cost ,
+                'Description' => 'for delete a trip to '. $trip->area->name . ' and canceled reservations',
+            ]);
+
+            $this->send($reservation->user->deviceToken, 'Canceled reservation', 'the Trip to '. $trip->area->name . ' has been canceled, and your money returned to you');
+
+            Not::create([
+                'user_id' => $reservation->user->id,
+                'title' => 'Canceled reservation',
+                'body' => 'the Trip to '. $trip->area->name . ' has been canceled, and your money returned to you',
+            ]);
+        }
+
+        $trip->delete();
+        return response()->json(['message' => 'you did delete this trip']);
     }
 
     public function getTrip($trip_id): JsonResponse

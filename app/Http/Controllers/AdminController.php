@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Contact;
+use App\Models\Not;
 use App\Models\TheWorld\Facilities\Requirement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -86,7 +87,7 @@ class AdminController extends Controller
     {
         $contacts = Contact::all();
         if ($contacts->isEmpty()) {
-            return response()->json(['error' => 'No massage Found']);
+            return response()->json(['error' => 'No message Found']);
         }
         $format = [];
         foreach ($contacts as $contact) {
@@ -96,10 +97,10 @@ class AdminController extends Controller
                 'name' => $contact->user->firstName . ' ' . $contact->user->lastName,
                 'title' => $contact->title,
                 'msg' => $contact->msg,
-                'Date' => $contact->created_at,
+                'Date' => $contact->created_at->format('d-m-Y'),
             ];
         }
-        return response()->json(['Massages' => $format]);
+        return response()->json(['Messages' => $format]);
     }
 
     public function getTransferRequests(): JsonResponse
@@ -153,16 +154,28 @@ class AdminController extends Controller
             $user->increment('wallet', $requierment->amount);
 
             $this->send($user->deviceToken, 'Balance charge',
-                'Your request has been accepted, your account has been charged with ' . $requierment->amount . ', and you now have' . $user->wallet);
+                'Your request has been accepted, your account has been charged with ' . $requierment->amount . ' ,and you now have ' . $user->wallet);
 
+            Not::create([
+                'user_id' => $user->id,
+                'title' => 'Balance charge',
+                'body' => 'Your request has been accepted, your account has been charged with ' . $requierment->amount . ', and you now have ' . $user->wallet,
+            ]);
             return response()->json(['message' => "You have accepted this request"]);
         }
 
-        $this->send($user->deviceToken, 'Balance charge', 'Your request was rejected, your balance is now' . $user->wallet);
+        $this->send($user->deviceToken, 'Balance charge', 'Your request was rejected, your balance is now ' . $user->wallet);
+
+        Not::create([
+            'user_id' => $user->id,
+            'title' => 'Balance charge',
+            'body' => 'Your request was rejected, your balance is now ' . $user->wallet,
+        ]);
+
         return response()->json(['message' => "You have reject this request"]);
     }
 
-    public function sendMassage(Request $request): JsonResponse
+    public function sendMessage(Request $request): JsonResponse
     {
         $validator = validator::make($request->all(), [
             'title' => ['required', 'string'],
@@ -175,9 +188,16 @@ class AdminController extends Controller
         $users = User::where('role_id', 6)->get();
 
         foreach ($users as $user) {
+            if(!$user->deviceToken){continue;}
             $this->send($user->deviceToken, $request->title, $request->body);
+
+            Not::create([
+                'user_id' => $user->id,
+                'title' => $request->title,
+                'body' => $request->body,
+            ]);
         }
-        return response()->json(['message' => "You have send a massage for all tourists"]);
+        return response()->json(['message' => "You have send a message for all tourists"]);
 
     }
 }

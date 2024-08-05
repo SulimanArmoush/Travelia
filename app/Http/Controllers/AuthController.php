@@ -11,11 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule as ValidationRule;
+use App\Traits\NotificationTrait;
 
 class AuthController extends Controller
 {
 
-    use MyTrait;
+    use MyTrait , NotificationTrait;
 
     public function register(Request $request): JsonResponse
     {
@@ -91,6 +92,7 @@ class AuthController extends Controller
             if ($user->deviceToken != $request->token) {
                 $user->update(['deviceToken' => $request->token]);
             }
+            $this->send($user->deviceToken, 'WELCOME', 'Logged In successfully ');
         }
 
         $data['user'] = $user;
@@ -103,6 +105,9 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
+        if($request->user()->role_id == 6) {
+            $this->send($request->user()->deviceToken, 'GOODBYE', 'Logged Out successfully ');
+        }
         $request->user()->token()->revoke();
         return response()->json(['message' => 'logged out ']);
     }

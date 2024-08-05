@@ -66,4 +66,9 @@ class Trip extends Model
         return $this->belongsTo(Transporter::class,'transporter_id');
     }
 
+    public function area():BelongsTo
+    {
+        return $this->belongsTo(TouristArea::class , 'touristArea_id');
+    }
+
 }

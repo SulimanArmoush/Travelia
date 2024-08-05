@@ -91,7 +91,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'getFav'],//66
             ['name' => 'getUserTripBooking'],//67
             ['name' => 'getUserBooking'],//68
-            ['name' => 'sendMassage'],//69
+            ['name' => 'sendMessage'],//69
+            ['name' => 'getNotifications'],//70
+            ['name' => 'deleteTrip'],//71
+            ['name' => 'deleteTripReservation'],//72
+            ['name' => 'deleteRestaurantReservation'],//73
+            ['name' => 'deleteReservation'],//74
+
 
 
         ];

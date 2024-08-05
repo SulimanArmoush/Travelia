@@ -212,7 +212,7 @@ class FacilityController extends Controller
             'title' => $request->title,
             'msg' => $request->msg,
         ]);
-        return response()->json(['message' => "your massage sent successfully"]);
+        return response()->json(['message' => "your message sent successfully"]);
     }
 
     public function getWallet():JsonResponse

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Finance;
+use App\Models\Not;
 use App\Models\TheWorld\Facilities\Hotels\Hotel;
 use App\Models\TheWorld\Facilities\Hotels\Room;
 use App\Models\TheWorld\Facilities\Organizers\Trip;
@@ -16,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\NotificationTrait;
 
@@ -72,12 +74,60 @@ class ReservationController extends Controller
             'Description' => 'for booking ' . $request->placeNum . ' person on a trip',
         ]);
 
-        $this->send($user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
+        $this->send($user->deviceToken, 'Successful reservation', 'The reservation was successful and ' . $cost . ' was withdrawn from your account');
+
+        Not::create([
+            'user_id' => $user->id,
+            'title' => 'Successful reservation',
+            'body' => 'The reservation was successful and ' . $cost . ' was withdrawn from your account',
+        ]);
 
         return response()->json([
             'message' => "Your reservation has been completed successfully",
             'remaining time' => Carbon::parse($trip->strDate)->diffForHumans(now()),
         ]);
+    }
+
+    public function deleteTripReservation($reservation_id): JsonResponse
+    {
+        $reservation = TripReservation::find($reservation_id);
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation No Found']);
+        }
+
+        if ($reservation->user->id != Auth::id()) {
+            return response()->json(['error' => 'This reservation is not belongs to you']);
+        }
+
+        if (Carbon::now()->greaterThan(Carbon::parse($reservation->trip->strDate)->subDay())) {
+            return response()->json(['error' => 'you cant delete this reservation after now']);
+        }
+
+        $before = $reservation->trip->organizer->facility->user->wallet;
+        $reservation->trip->organizer->facility->user->decrement('wallet', $reservation->cost);
+        $after = $reservation->trip->organizer->facility->user->wallet;
+        $reservation->trip->decrement('capacity', $reservation->placeNum);
+        $reservation->user->increment('wallet', $reservation->cost);
+
+        Finance::create([
+            'from' => $reservation->user->id,
+            'to' => $reservation->trip->organizer->facility->user->id,
+            'before' => $before,
+            'after' => $after,
+            'Intake' => $reservation->cost,
+            'Description' => 'for cancel a reservation to' . $reservation->trip->area->name . ' with' . $reservation->trip->organizer->facility->name,
+        ]);
+
+        $this->send($reservation->user->deviceToken, 'Canceled reservation', 'your reservation has been canceled successfully');
+
+        Not::create([
+            'user_id' => $reservation->user->id,
+            'title' => 'Canceled reservation',
+            'body' => 'your reservation has been canceled successfully',
+        ]);
+
+        $reservation->delete();
+        return response()->json(['message' => 'reservation deleted successfully']);
     }
 
     public function getReservation($trip_id): JsonResponse
@@ -109,6 +159,7 @@ class ReservationController extends Controller
     {
         $user = Auth::user();
         $validator = validator::make($request->all(), [
+            'area_id' => ['required', 'integer'],
             'placeNum' => ['required', 'integer'],
             'strDate' => ['required', 'date'],
             'endDate' => ['required', 'date'],
@@ -118,6 +169,11 @@ class ReservationController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->all(), status: 400);
+        }
+
+        $area = Hotel::find($request->area_id);
+        if (!$area) {
+            return response()->json(['error' => 'Area not found']);
         }
 
         $hotel = Hotel::find($request->hotel_id);
@@ -172,6 +228,7 @@ class ReservationController extends Controller
         }
 
         Reservation::create([
+            'area_id' => $area->id,
             'user_id' => $user->id,
             'placeNum' => $request->placeNum,
             'strDate' => $request->strDate,
@@ -208,8 +265,13 @@ class ReservationController extends Controller
             'Description' => 'for booking for ' . $request->placeNum . ' person on a route',
         ]);
 
-        $this->send($user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
+        $this->send($user->deviceToken, 'Successful reservation', 'The reservation ' . $area->name . ' was successful and ' . $cost . ' was withdrawn from your account');
 
+        Not::create([
+            'user_id' => $user->id,
+            'title' => 'Successful reservation',
+            'body' => 'The reservation ' . $area->name . ' was successful and ' . $cost . ' was withdrawn from your account',
+        ]);
 
         return response()->json([
             'message' => "Your reservation has been completed successfully",
@@ -295,7 +357,13 @@ class ReservationController extends Controller
             'Description' => 'for booking ' . $table->type,
         ]);
 
-        $this->send($reservation->user->deviceToken,'Successful reservation','The reservation was successful and ' . $cost . ' was withdrawn from your account');
+        $this->send($reservation->user->deviceToken, 'Successful reservation', 'The reservation was successful and ' . $cost . ' was withdrawn from your account');
+
+        Not::create([
+            'user_id' => $reservation->user->id,
+            'title' => 'Successful reservation',
+            'body' => 'The reservation was successful and ' . $cost . ' was withdrawn from your account',
+        ]);
 
         return response()->json([
             'message' => "Your Table has been reserved successfully",
@@ -303,6 +371,149 @@ class ReservationController extends Controller
         ]);
     }
 
+    public function deleteRestaurantReservation($reservation_id): JsonResponse
+    {
+        $reservation = RestaurantReservation::find($reservation_id);
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation No Found']);
+        }
+
+        if ($reservation->reservation->user->id != Auth::id()) {
+            return response()->json(['error' => 'This reservation is not belongs to you']);
+        }
+
+        if (Carbon::now()->greaterThan(Carbon::parse($reservation->strDate))) {
+            return response()->json(['error' => 'you cant delete this reservation after now']);
+        }
+
+        $cost = $reservation->table->cost;
+
+        $reservation->reservation->user->increment('wallet', $cost);
+        $before = $reservation->table->restaurant->facility->user->wallet;
+        $reservation->table->restaurant->facility->user->decrement('wallet', $cost);
+        $after = $reservation->table->restaurant->facility->user->wallet;
+
+        Finance::create([
+            'from' => $reservation->reservation->user->id,
+            'to' => $reservation->table->restaurant->facility->user->id,
+            'before' => $before,
+            'after' => $after,
+            'Intake' => $cost,
+            'Description' => 'for booking ' . $reservation->table->type,
+        ]);
+
+        $this->send($reservation->reservation->user->deviceToken, 'Canceled reservation', 'your reservation has been canceled successfully');
+
+        Not::create([
+            'user_id' => $reservation->reservation->user->id,
+            'title' => 'Canceled reservation',
+            'body' => 'your reservation has been canceled successfully',
+        ]);
+
+        $reservation->delete();
+        return response()->json(['message' => 'reservation deleted successfully']);
+    }
+
+
+    public function deleteReservation($reservation_id): JsonResponse
+    {
+        $reservation = Reservation::find($reservation_id);
+        if (!$reservation) {
+            return response()->json(['error' => 'Reservation Not Found']);
+        }
+
+        if ($reservation->user->id != Auth::id()) {
+            return response()->json(['error' => 'This reservation does not belong to you']);
+        }
+
+        if (Carbon::now()->greaterThan(Carbon::parse($reservation->strDate)->subDay())) {
+            return response()->json(['error' => 'You cannot delete this reservation after now']);
+        }
+
+
+        $startDate = Carbon::parse($reservation->strDate);
+        $endDate = Carbon::parse($reservation->endDate);
+
+        $daysNum = $startDate->diffInDays($endDate) + 1;
+
+        $roomCost = $reservation->room->cost * $daysNum;
+        $routeCost = $reservation->placeNum * $reservation->routing->cost;
+        $totalCost = $routeCost + $roomCost;
+
+        $reservation->user->increment('wallet', $totalCost);
+        $hotelBefore = $reservation->room->hotel->facility->user->wallet;
+        $transporterBefore = $reservation->routing->transportation->transporter->facility->user->wallet;
+        $reservation->room->hotel->facility->user->decrement('wallet', $roomCost);
+        $reservation->routing->transportation->transporter->facility->user->decrement('wallet', $routeCost);
+        $hotelAfter = $reservation->room->hotel->facility->user->wallet;
+        $transporterAfter = $reservation->routing->transportation->transporter->facility->user->wallet;
+
+        $reservation->routing->decrement('capacity', $reservation->placeNum);
+
+        Finance::create([
+            'from' => $reservation->user->id,
+            'to' => $reservation->room->hotel->facility->user->id,
+            'before' => $hotelBefore,
+            'after' => $hotelAfter,
+            'Intake' => $roomCost,
+            'Description' => 'for cancel booking ' . $reservation->room->type,
+        ]);
+
+        Finance::create([
+            'from' => $reservation->user->id,
+            'to' => $reservation->routing->transportation->transporter->facility->user->id,
+            'before' => $transporterBefore,
+            'after' => $transporterAfter,
+            'Intake' => $routeCost,
+            'Description' => 'cancel a reservation on a route',
+        ]);
+
+        $this->send($reservation->user->deviceToken, 'Canceled reservation', 'Your reservation has been canceled successfully');
+
+        Not::create([
+            'user_id' => $reservation->user->id,
+            'title' => 'Canceled reservation',
+            'body' => 'Your reservation has been canceled successfully',
+        ]);
+
+        // Handle restaurant reservations
+        $restaurantReservations = $reservation->restaurantReservations;
+        foreach ($restaurantReservations as $restaurantReservation) {
+
+            if (Carbon::now()->greaterThan(Carbon::parse($restaurantReservation->strDate))) {
+                return response()->json(['error' => 'You cannot delete this reservation after now']);
+            }
+
+            $restaurantCost = $restaurantReservation->table->cost;
+
+            $restaurantReservation->reservation->user->increment('wallet', $restaurantCost);
+            $before = $restaurantReservation->table->restaurant->facility->user->wallet;
+            $restaurantReservation->table->restaurant->facility->user->decrement('wallet', $restaurantCost);
+            $after = $restaurantReservation->table->restaurant->facility->user->wallet;
+
+            Finance::create([
+                'from' => $restaurantReservation->reservation->user->id,
+                'to' => $restaurantReservation->table->restaurant->facility->user->id,
+                'before' => $before,
+                'after' => $after,
+                'Intake' => $restaurantCost,
+                'Description' => 'for booking ' . $restaurantReservation->table->type,
+            ]);
+
+            $this->send($restaurantReservation->reservation->user->deviceToken, 'Canceled restaurant reservation', 'Your restaurant reservation has been canceled successfully');
+
+            Not::create([
+                'user_id' => $restaurantReservation->reservation->user->id,
+                'title' => 'Canceled restaurant reservation',
+                'body' => 'Your restaurant reservation has been canceled successfully',
+            ]);
+            $restaurantReservation->delete();
+        }
+
+        $reservation->delete();
+
+        return response()->json(['message' => 'Reservation deleted successfully']);
+    }
 
     public function getUserTripBooking(): JsonResponse
     {
@@ -310,7 +521,7 @@ class ReservationController extends Controller
         $formatted = collect();
         foreach ($user->tripReservations as $reservation) {
             $formatted->push([
-                'trip_id'=>$reservation->trip->id,
+                'trip_id' => $reservation->trip->id,
                 'organizerName' => $reservation->trip->organizer->facility->name,
                 'organizerImg' => $reservation->trip->organizer->facility->img,
                 'organizerAddress' => $reservation->trip->organizer->facility->location->address,
@@ -338,12 +549,14 @@ class ReservationController extends Controller
         $formatted = collect();
         foreach ($user->reservations as $reservation) {
             $reservationDetails = [
+                'area' => $reservation->area->name,
+                'address' => $reservation->area->location->address,
+
                 'strDate' => $reservation->strDate,
                 'endDate' => $reservation->endDate,
-                'daysNumber' => Carbon::parse($reservation->strDate)->diffInDays(Carbon::parse($reservation->endDate))+1,
+                'daysNumber' => Carbon::parse($reservation->strDate)->diffInDays(Carbon::parse($reservation->endDate)) + 1,
                 'placeNum' => $reservation->placeNum,
                 'cost' => $reservation->cost,
-                'address' => $reservation->room->hotel->facility->location->address ,
 
                 'hotel' => $reservation->room->hotel->facility->name,
                 'hotelImg' => $reservation->room->hotel->facility->img,
@@ -356,7 +569,7 @@ class ReservationController extends Controller
                 'strLocation' => $reservation->routing->startLocation->address,
                 'endLocation' => $reservation->routing->endedLocation->address,
                 'routCost' => $reservation->routing->cost,
-                'routCapacity' => $reservation->routing->capacity . '/' .$reservation->routing->transportation->totalCapacity ,
+                'routCapacity' => $reservation->routing->capacity . '/' . $reservation->routing->transportation->totalCapacity,
 
                 'restaurants' => collect()
             ];

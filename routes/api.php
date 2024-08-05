@@ -37,7 +37,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('getContact', 'getContact')->name('getContact');
         Route::Get('getTransferRequests', 'getTransferRequests')->name('getTransferRequests');
         Route::Post('handlingTransferRequests/{requierment_id}', 'handlingTransferRequests')->name('handlingTransferRequests');
-        Route::Post('sendMassage', 'sendMassage')->name('sendMassage');
+        Route::Post('sendMessage', 'sendMassage')->name('sendMassage');
     });
     Route::controller(FacilityController::class)->group(function () {
         Route::Post('createAccount', 'createAccount')->name('createAccount');
@@ -64,6 +64,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Get('organizerTrips', 'organizerTrips')->name('organizerTrips');
         Route::Get('getAvailableTrips/{organizer_id}', 'getAvailableTrips')->name('getAvailableTrips');
         Route::Get('getAllAvailableTrips', 'getAllAvailableTrips')->name('getAllAvailableTrips');
+        Route::Delete('deleteTrip/{trip_id}', 'deleteTrip')->name('deleteTrip');
     });
     Route::controller(ReservationController::class)->group(function () {
         Route::Post('tripBooking/{trip_id}', 'tripBooking')->name('tripBooking');
@@ -72,6 +73,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Post('restaurantBooking/{reservation_id}', 'restaurantBooking')->name('restaurantBooking');
         Route::Get('getUserTripBooking', 'getUserTripBooking')->name('getUserTripBooking');
         Route::Get('getUserBooking', 'getUserBooking')->name('getUserBooking');
+        Route::Delete('deleteTripReservation/{reservation_id}', 'deleteTripReservation')->name('deleteTripReservation');
+        Route::Delete('deleteRestaurantReservation/{reservation_id}', 'deleteRestaurantReservation')->name('deleteRestaurantReservation');
+        Route::Delete('deleteReservation/{reservation_id}', 'deleteReservation')->name('deleteReservation');
+
     });
     Route::controller(RestaurantController::class)->group(function () {
         Route::Post('createTables', 'createTables')->name('createTables');
@@ -112,9 +117,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::Post('addToFav/{organizer_id}', 'addToFav')->name('addToFav');
         Route::Delete('removeFromFav/{organizer_id}', 'removeFromFav')->name('removeFromFav');
         Route::Get('getFav', 'getFav')->name('getFav');
+        Route::Get('getNotifications', 'getNotifications')->name('getNotifications');
     });
     //});
 });
-
-
-//Route::post('testSend/{token}', [UserController::class, 'testSend']);

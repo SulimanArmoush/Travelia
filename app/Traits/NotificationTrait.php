@@ -2,13 +2,12 @@
 
 namespace App\Traits;
 
-use Illuminate\Http\JsonResponse;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
 trait NotificationTrait
 {
-    public function send($deviceToken,$title,$body): string
+    public function send($deviceToken,$title,$body): void
     {
         $messaging = app('firebase.messaging');
 
@@ -17,8 +16,6 @@ trait NotificationTrait
         $message = CloudMessage::withTarget('token', $deviceToken)
             ->withNotification($notification);
 
-        $messaging->send($message);
-
-        return 'Notification sent';
+        //$messaging->send($message);
     }
 }

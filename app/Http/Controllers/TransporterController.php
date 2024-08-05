@@ -445,9 +445,12 @@ class TransporterController extends Controller
             $availableBusinessClassPlanesCount = count($availableBusinessClassPlanes);
 
             return response()->json([
-                'availableV1' => $normalPlaneCount . '/' . $availableNormalPlanesCount,
-                'availableV2' => $businessClassPlaneCount . '/' . $availableBusinessClassPlanesCount,
-                'availableV3' => '0/0']);
+                'v1' => $normalPlaneCount,
+                'availableV1' => $availableNormalPlanesCount,
+                'v2' => $businessClassPlaneCount,
+                'availableV2' => $availableBusinessClassPlanesCount,
+                'v3' => 0,
+                'availableV3' => 0]);
         }
 
         if ($transporter->type == 'land') {
@@ -508,12 +511,15 @@ class TransporterController extends Controller
             $availableVansCount = count($availableVans);
 
             return response()->json([
-                'availableV1' => $pullmansCount . '/' . $availablePullmansCount,
-                'availableV2' => $busesCount . '/' . $availableBusesCount,
-                'availableV3' => $vansCount . '/' . $availableVansCount]);
+                'v1' => $pullmansCount,
+                'availableV1' => $availablePullmansCount,
+                'v2' => $busesCount,
+                'availableV2' => $availableBusesCount,
+                'v3' => $vansCount,
+                'availableV3' => $availableVansCount]);
         }
 
-        return response()->json(['massage' => 'Hello World']);
+        return response()->json(['message' => 'Hello World']);
     }
 
     public function getTransporters(Request $request): JsonResponse
@@ -579,7 +585,7 @@ class TransporterController extends Controller
                 'address' => $reservation->user->address,
                 'photo' => $reservation->user->photo,
                 'placeNum' => $reservation->placeNum,
-                'cost' => $reservation->placeNum * $reservation->routing->cost,
+                'cost' => intval($reservation->placeNum * $reservation->routing->cost),
             ];
         }
         return response()->json([

@@ -139,9 +139,12 @@ class HotelController extends Controller
         }
 
         return response()->json([
-            'room for one person' => count($roomForOnePerson).'/'.count($availableRoomForOnePerson),
-            'room for two person' => count($roomForTwoPerson).'/'.count($availableRoomForTwoPerson),
-            'suite' => count($suite).'/'.count($availableSuite)
+            'roomForOnePerson' => count($roomForOnePerson),
+            'availableRoomForOnePerson' => count($availableRoomForOnePerson),
+            'roomForTwoPerson' => count($roomForTwoPerson),
+            'availableRoomForTwoPerson' => count($availableRoomForTwoPerson),
+            'suite' => count($suite),
+            'availableSuite' => count($availableSuite)
         ]);
     }
 

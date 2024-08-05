@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Not;
 use App\Models\Permissions\Role;
 use App\Models\TheWorld\Facilities\Facility;
 use App\Models\TheWorld\Facilities\Favorite;
@@ -146,17 +147,23 @@ class UserController extends Controller
             return response()->json($validator->errors()->all(), status: 400);
         }
 
-        $user = Auth::id();
+        $user = Auth::user();
         Requirement::create([
             'user_id' => $user->id,
             'note' => 'Accept the transfer request with the required value',
             'amount' => $request->amount
         ]);
 
-        $this->send($user->deviceToken,'Balance charge',
+        $this->send($user->deviceToken, 'Balance charge',
             'Your request has been sent successfully. You will receive a message when the process is successful');
 
-        return response()->json(['massage' => 'your request is being verified']);
+        Not::create([
+            'user_id' => $user->id,
+            'title' => 'Balance charge',
+            'body' => 'Your request has been sent successfully. You will receive a message when the process is successful',
+        ]);
+
+        return response()->json(['message' => 'your request is being verified']);
 
     }
 
@@ -236,13 +243,27 @@ class UserController extends Controller
         return response()->json(['favorites' => $formatted]);
     }
 
-
-
-/*    public function testSend($token):String
+    public function getNotifications(): JsonResponse
     {
-            return $this->send($token,
-                'شو ما كان','كان ياما كان');
-    }*/
+        $user = Auth::user();
+        if ($user->role_id != 6) {
+            return response()->json(['error' => 'you are not a tourist']);
+        }
 
+        $formatted = collect();
+        foreach ($user->notifications as $notification) {
+            $formatted->push([
+                'title' => $notification->title,
+                'body' => $notification->body,
+                'date'=>$notification->created_at->format('Y-m-d'),
+                'time' => $notification->created_at->format('h:i A')
+            ]);
+        }
+        if ($formatted->isEmpty()) {
+            return response()->json(['error' => 'Notifications Not Found']);
+
+        }
+        return response()->json(['Notifications' => $formatted]);
+    }
 }
 

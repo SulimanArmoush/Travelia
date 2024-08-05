@@ -93,10 +93,16 @@ class RestaurantController extends Controller
         $tableWithFourChairs = [];
         $tableWithMoreThan4Chairs = [];
 
-        foreach ($restaurant->tables as $table){
-            if($table->type == 'table with two chairs'){$tableWithTwoChairs [] = $table;}
-            if($table->type == 'table with four chairs'){$tableWithFourChairs [] = $table;}
-            if($table->type == 'table with more than 4 chairs'){$tableWithMoreThan4Chairs [] = $table;}
+        foreach ($restaurant->tables as $table) {
+            if ($table->type == 'table with two chairs') {
+                $tableWithTwoChairs [] = $table;
+            }
+            if ($table->type == 'table with four chairs') {
+                $tableWithFourChairs [] = $table;
+            }
+            if ($table->type == 'table with more than 4 chairs') {
+                $tableWithMoreThan4Chairs [] = $table;
+            }
         }
 
         $validator = Validator::make($request->all(), [
@@ -127,36 +133,47 @@ class RestaurantController extends Controller
         $availableTableWithFourChairs = [];
         $availableTableWithMoreThan4Chairs = [];
 
-        foreach ($availableTables as $availableTable){
-            if($availableTable->type == 'table with two chairs'){$availableTableWithTwoChairs [] = $availableTable;}
-            if($availableTable->type == 'table with four chairs'){$availableTableWithFourChairs [] = $availableTable;}
-            if($availableTable->type == 'table with more than 4 chairs'){$availableTableWithMoreThan4Chairs [] = $availableTable;}
+        foreach ($availableTables as $availableTable) {
+            if ($availableTable->type == 'table with two chairs') {
+                $availableTableWithTwoChairs [] = $availableTable;
+            }
+            if ($availableTable->type == 'table with four chairs') {
+                $availableTableWithFourChairs [] = $availableTable;
+            }
+            if ($availableTable->type == 'table with more than 4 chairs') {
+                $availableTableWithMoreThan4Chairs [] = $availableTable;
+            }
         }
 
         return response()->json([
-            'table with two chairs' => count($tableWithTwoChairs).'/'.count($availableTableWithTwoChairs),
-            'table with four chairs' => count($tableWithFourChairs).'/'.count($availableTableWithFourChairs),
-            'table with more than 4 chairs' => count($tableWithMoreThan4Chairs).'/'.count($availableTableWithMoreThan4Chairs)
+            'tableWithTwoChairs' => count($tableWithTwoChairs),
+            'availableTableWithTwoChairs' => count($availableTableWithTwoChairs),
+            'tableWithFourChairs' => count($tableWithFourChairs),
+            'availableTableWithFourChairs' => count($availableTableWithFourChairs),
+            'tableWithMoreThan4Chairs' => count($tableWithMoreThan4Chairs),
+            'availableTableWithMoreThan4Chairs' => count($availableTableWithMoreThan4Chairs)
         ]);
     }
 
-    public function getRestaurantReservation():JsonResponse
+    public function getRestaurantReservation(): JsonResponse
     {
         $list = Auth::user()->facility->restaurant->restaurantReservations;
-        if($list->isEmpty()){
-            return response()->json(['error'=>'Reservation Not Found']);
+        if ($list->isEmpty()) {
+            return response()->json(['error' => 'Reservation Not Found']);
         };
 
         $formattedList = collect();
-        foreach ($list as $item){
-            if (Carbon::parse($item->DateTime)->isPast()) {continue;}
+        foreach ($list as $item) {
+            if (Carbon::parse($item->DateTime)->isPast()) {
+                continue;
+            }
             $formattedList->push([
                 'id' => $item->id,
                 'table' => $item->table->type,
                 'cost' => $item->cost,
                 'date' => Carbon::parse($item->DateTime)->format('Y-m-d'),
                 'hour' => Carbon::parse($item->DateTime)->format('H:i'),
-                'name' => $item->reservation->user->firstName.' '.$item->reservation->user->lastName,
+                'name' => $item->reservation->user->firstName . ' ' . $item->reservation->user->lastName,
                 'email' => $item->reservation->user->email,
                 'phone' => $item->reservation->user->phone,
                 'age' => $item->reservation->user->age,
