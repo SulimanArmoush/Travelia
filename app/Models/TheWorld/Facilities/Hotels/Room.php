@@ -11,16 +11,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     use HasFactory;
-    protected $fillable = ['hotel_id','cost','type'] ;
+
+    protected $fillable = ['hotel_id', 'cost', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function hotel():BelongsTo
+    public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotel::class);
     }
 
-    public function reservations():hasMany
+    public function reservations(): hasMany
     {
         return $this->hasMany(Reservation::class);
     }

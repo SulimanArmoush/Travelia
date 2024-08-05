@@ -132,8 +132,8 @@ class OrganizerController extends Controller
     public function deleteTrip($trip_id): JsonResponse
     {
         $trip = Trip::find($trip_id);
-        if(!$trip){
-            return response()->json(['error'=>'Trip Not Found']);
+        if (!$trip) {
+            return response()->json(['error' => 'Trip Not Found']);
         }
 
         $organizer = $trip->organizer->facility->user;
@@ -145,7 +145,7 @@ class OrganizerController extends Controller
             return response()->json(['error' => 'you cant delete this trip after now']);
         }
 
-        foreach ($trip->tripReservations as $reservation){
+        foreach ($trip->tripReservations as $reservation) {
 
             $before = $organizer->wallet;
             $organizer->decrement('wallet', $reservation->cost);
@@ -158,16 +158,16 @@ class OrganizerController extends Controller
                 'to' => $organizer->id,
                 'before' => $before,
                 'after' => $after,
-                'Intake' => $reservation->cost ,
-                'Description' => 'for delete a trip to '. $trip->area->name . ' and canceled reservations',
+                'Intake' => $reservation->cost,
+                'Description' => 'for delete a trip to ' . $trip->area->name . ' and canceled reservations',
             ]);
 
-            $this->send($reservation->user->deviceToken, 'Canceled reservation', 'the Trip to '. $trip->area->name . ' has been canceled, and your money returned to you');
+            $this->send($reservation->user->deviceToken, 'Canceled reservation', 'the Trip to ' . $trip->area->name . ' has been canceled, and your money returned to you');
 
             Not::create([
                 'user_id' => $reservation->user->id,
                 'title' => 'Canceled reservation',
-                'body' => 'the Trip to '. $trip->area->name . ' has been canceled, and your money returned to you',
+                'body' => 'the Trip to ' . $trip->area->name . ' has been canceled, and your money returned to you',
             ]);
         }
 

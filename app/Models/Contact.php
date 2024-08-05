@@ -19,8 +19,8 @@ class Contact extends Model
 
     //protected $hidden = ['created_at', 'updated_at'];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class,'from');
+        return $this->belongsTo(User::class, 'from');
     }
 }

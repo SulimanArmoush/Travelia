@@ -30,12 +30,12 @@ class Reservation extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function user() :BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function room() :BelongsTo
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
@@ -52,7 +52,7 @@ class Reservation extends Model
 
     public function area(): belongsTo
     {
-        return $this->belongsTo(TouristArea::class,'area_id');
+        return $this->belongsTo(TouristArea::class, 'area_id');
     }
 
 }

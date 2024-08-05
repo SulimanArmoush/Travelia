@@ -13,16 +13,17 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Restaurant extends Model
 {
     use HasFactory;
-    protected $fillable = ['facility_id','type'] ;
+
+    protected $fillable = ['facility_id', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function facility() :BelongsTo
+    public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class);
     }
 
-    public function tables():hasMany
+    public function tables(): hasMany
     {
         return $this->hasMany(Table::class);
     }

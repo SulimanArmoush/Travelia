@@ -94,10 +94,16 @@ class HotelController extends Controller
         $roomForTwoPerson = [];
         $suite = [];
 
-        foreach ($hotel->rooms as $room){
-            if($room->type == 'room for one person'){$roomForOnePerson [] = $room;}
-            if($room->type == 'room for two person'){$roomForTwoPerson [] = $room;}
-            if($room->type == 'suite'){$suite [] = $room;}
+        foreach ($hotel->rooms as $room) {
+            if ($room->type == 'room for one person') {
+                $roomForOnePerson [] = $room;
+            }
+            if ($room->type == 'room for two person') {
+                $roomForTwoPerson [] = $room;
+            }
+            if ($room->type == 'suite') {
+                $suite [] = $room;
+            }
         }
 
         $validator = Validator::make($request->all(), [
@@ -132,10 +138,16 @@ class HotelController extends Controller
         $availableRoomForTwoPerson = [];
         $availableSuite = [];
 
-        foreach ($availableRooms as $availableRoom){
-            if($availableRoom->type == 'room for one person'){$availableRoomForOnePerson [] = $availableRoom;}
-            if($availableRoom->type == 'room for two person'){$availableRoomForTwoPerson [] = $availableRoom;}
-            if($availableRoom->type == 'suite'){$availableSuite [] = $availableRoom;}
+        foreach ($availableRooms as $availableRoom) {
+            if ($availableRoom->type == 'room for one person') {
+                $availableRoomForOnePerson [] = $availableRoom;
+            }
+            if ($availableRoom->type == 'room for two person') {
+                $availableRoomForTwoPerson [] = $availableRoom;
+            }
+            if ($availableRoom->type == 'suite') {
+                $availableSuite [] = $availableRoom;
+            }
         }
 
         return response()->json([
@@ -148,16 +160,18 @@ class HotelController extends Controller
         ]);
     }
 
-    public function getHotelReservation():JsonResponse
+    public function getHotelReservation(): JsonResponse
     {
         $list = Auth::user()->facility->hotel->reservations;
-        if($list->isEmpty()){
-            return response()->json(['error'=>'Reservation Not Found']);
+        if ($list->isEmpty()) {
+            return response()->json(['error' => 'Reservation Not Found']);
         };
 
         $formattedList = collect();
-        foreach ($list as $item){
-            if (Carbon::parse($item->strDate)->isPast()) {continue;}
+        foreach ($list as $item) {
+            if (Carbon::parse($item->strDate)->isPast()) {
+                continue;
+            }
 
             $daysNum = Carbon::parse($item->strDate)->diffInDays($item->endDate) + 1;
             $roomCost = $item->room->cost * $daysNum;
@@ -168,8 +182,8 @@ class HotelController extends Controller
                 'cost' => $roomCost,
                 'strDate' => Carbon::parse($item->strDate)->format('Y-m-d'),
                 'endDate' => Carbon::parse($item->endDate)->format('Y-m-d'),
-                'daysNum'=>$daysNum,
-                'name' => $item->user->firstName.' '.$item->user->lastName,
+                'daysNum' => $daysNum,
+                'name' => $item->user->firstName . ' ' . $item->user->lastName,
                 'email' => $item->user->email,
                 'phone' => $item->user->phone,
                 'age' => $item->user->age,

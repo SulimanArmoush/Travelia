@@ -12,22 +12,23 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Transporter extends Model
 {
     use HasFactory;
+
     protected $fillable = ['facility_id', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function facility():BelongsTo
+    public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class);
     }
 
-    public function transportations():hasMany
+    public function transportations(): hasMany
     {
         return $this->hasMany(Transportation::class);
     }
 
-    public function routs():hasManyThrough
+    public function routs(): hasManyThrough
     {
-        return $this->hasManyThrough(Routing::class,Transportation::class);
+        return $this->hasManyThrough(Routing::class, Transportation::class);
     }
 }

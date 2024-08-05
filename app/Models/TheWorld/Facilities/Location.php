@@ -19,22 +19,22 @@ class Location extends Model
         'country',
         'state',
         'city'
-        ];
+    ];
 
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function facility():hasOne
+    public function facility(): hasOne
     {
         return $this->hasOne(Facility::class);
     }
 
-    public function touristArea():hasOne
+    public function touristArea(): hasOne
     {
         return $this->hasOne(TouristArea::class);
     }
 
-    public function trip():hasOne
+    public function trip(): hasOne
     {
         return $this->hasOne(Trip::class);
     }

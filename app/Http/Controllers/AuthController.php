@@ -16,7 +16,7 @@ use App\Traits\NotificationTrait;
 class AuthController extends Controller
 {
 
-    use MyTrait , NotificationTrait;
+    use MyTrait, NotificationTrait;
 
     public function register(Request $request): JsonResponse
     {
@@ -105,7 +105,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        if($request->user()->role_id == 6) {
+        if ($request->user()->role_id == 6) {
             $this->send($request->user()->deviceToken, 'GOODBYE', 'Logged Out successfully ');
         }
         $request->user()->token()->revoke();

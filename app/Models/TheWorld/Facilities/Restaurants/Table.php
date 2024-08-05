@@ -12,16 +12,16 @@ class Table extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['restaurant_id','cost','type'] ;
+    protected $fillable = ['restaurant_id', 'cost', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function restaurantReservations():hasMany
+    public function restaurantReservations(): hasMany
     {
-        return $this->hasMany(RestaurantReservation::class , 'table_id');
+        return $this->hasMany(RestaurantReservation::class, 'table_id');
     }
 
-    public function restaurant():BelongsTo
+    public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
     }

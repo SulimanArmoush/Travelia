@@ -255,7 +255,7 @@ class UserController extends Controller
             $formatted->push([
                 'title' => $notification->title,
                 'body' => $notification->body,
-                'date'=>$notification->created_at->format('Y-m-d'),
+                'date' => $notification->created_at->format('Y-m-d'),
                 'time' => $notification->created_at->format('h:i A')
             ]);
         }

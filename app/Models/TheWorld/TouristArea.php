@@ -17,11 +17,11 @@ class TouristArea extends Model
         'img',
         'location_id',
         'type'
-    ] ;
+    ];
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function location():BelongsTo
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
     }

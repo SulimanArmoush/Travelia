@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class RestaurantReservation extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'reservation_id',
         'table_id',
@@ -22,7 +23,7 @@ class RestaurantReservation extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function reservation():BelongsTo
+    public function reservation(): BelongsTo
     {
         return $this->belongsTo(Reservation::class);
     }

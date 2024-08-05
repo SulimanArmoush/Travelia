@@ -13,21 +13,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Organizer extends Model
 {
     use HasFactory;
-    protected $fillable = ['facility_id','type'] ;
+
+    protected $fillable = ['facility_id', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function facility() :BelongsTo
+    public function facility(): BelongsTo
     {
         return $this->belongsTo(Facility::class);
     }
 
-    public function trips():hasMany
+    public function trips(): hasMany
     {
         return $this->hasMany(Trip::class);
     }
 
-    public function favorites():BelongsToMany
+    public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(Organizer::class, 'favorites');
     }

@@ -34,41 +34,44 @@ class Trip extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function tripReservations():hasMany
+    public function tripReservations(): hasMany
     {
         return $this->hasMany(TripReservation::class);
     }
 
-    public function organizer():BelongsTo
+    public function organizer(): BelongsTo
     {
         return $this->belongsTo(Organizer::class);
     }
 
-    public function location():BelongsTo
+    public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class,'strLocation');
+        return $this->belongsTo(Location::class, 'strLocation');
     }
 
-    public function touristArea():BelongsTo
+    public function touristArea(): BelongsTo
     {
-        return $this->belongsTo(TouristArea::class,'touristArea_id');
-    }
-    public function hotel():BelongsTo
-    {
-        return $this->belongsTo(Hotel::class,'hotel_id');
-    }
-    public function restaurant():BelongsTo
-    {
-        return $this->belongsTo(Restaurant::class,'restaurant_id');
-    }
-    public function transporter():BelongsTo
-    {
-        return $this->belongsTo(Transporter::class,'transporter_id');
+        return $this->belongsTo(TouristArea::class, 'touristArea_id');
     }
 
-    public function area():BelongsTo
+    public function hotel(): BelongsTo
     {
-        return $this->belongsTo(TouristArea::class , 'touristArea_id');
+        return $this->belongsTo(Hotel::class, 'hotel_id');
+    }
+
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
+    }
+
+    public function transporter(): BelongsTo
+    {
+        return $this->belongsTo(Transporter::class, 'transporter_id');
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(TouristArea::class, 'touristArea_id');
     }
 
 }

@@ -75,7 +75,7 @@ class FacilityController extends Controller
             ]);
         }
         Auth::user()->update(['confirmation' => '2']);
-        if(Auth::user()->role_id == 5 ){
+        if (Auth::user()->role_id == 5) {
             Auth::user()->update(['type' => $facility->transporter->type]);
         }
         return response()->json(['message' => 'Your Account created successfully']);
@@ -176,7 +176,7 @@ class FacilityController extends Controller
 
     public function getFinances(): JsonResponse
     {
-        $fins =  Auth::user()->finances;
+        $fins = Auth::user()->finances;
         if ($fins->isEmpty()) {
             return response()->json(['error' => "Report is Empty"]);
         }
@@ -215,7 +215,7 @@ class FacilityController extends Controller
         return response()->json(['message' => "your message sent successfully"]);
     }
 
-    public function getWallet():JsonResponse
+    public function getWallet(): JsonResponse
     {
         $Balance = Auth::user()->wallet;
         return response()->json(['Balance' => $Balance]);

@@ -11,16 +11,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Transportation extends Model
 {
     use HasFactory;
-    protected $fillable = ['transporter_id','totalCapacity','cost','type'] ;
+
+    protected $fillable = ['transporter_id', 'totalCapacity', 'cost', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    public function routings():hasMany
+    public function routings(): hasMany
     {
         return $this->hasMany(Routing::class);
     }
 
-    public function transporter():BelongsTo
+    public function transporter(): BelongsTo
     {
         return $this->belongsTo(Transporter::class);
     }

@@ -99,7 +99,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'deleteReservation'],//74
 
 
-
         ];
         Role::insert($roles);
         Permission::insert($permissions);

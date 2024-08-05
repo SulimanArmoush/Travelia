@@ -19,7 +19,7 @@ class CheckRole
         $user = auth()->user();
         $user_role = Role::find($user->role_id);
         $permissionName = $request->route()->getName();
-        if (! $user_role->check($permissionName)) {
+        if (!$user_role->check($permissionName)) {
             return response()->json(['message' => 'Access Denied'], 401);
         }
 

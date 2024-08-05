@@ -12,19 +12,19 @@ class Role extends Model
 
     protected $fillable = [
         'name',
-    ] ;
+    ];
 
-    public function users():hasMany
+    public function users(): hasMany
     {
         return $this->hasMany(User::class);
     }
 
-    public function permission_role():hasMany
+    public function permission_role(): hasMany
     {
         return $this->hasMany(PermissionRole::class);
     }
 
-    public function check($param):bool
+    public function check($param): bool
     {
         $permission =
             Permission::query()

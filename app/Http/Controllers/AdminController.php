@@ -188,7 +188,9 @@ class AdminController extends Controller
         $users = User::where('role_id', 6)->get();
 
         foreach ($users as $user) {
-            if(!$user->deviceToken){continue;}
+            if (!$user->deviceToken) {
+                continue;
+            }
             $this->send($user->deviceToken, $request->title, $request->body);
 
             Not::create([

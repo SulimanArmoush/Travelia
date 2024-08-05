@@ -14,8 +14,8 @@ class PermissionRoleSeeder extends Seeder
     public function run(): void
     {
         PermissionRole::insert([
-                'permission_id' => 1,
-                'role_id' => 1,
-            ]);
+            'permission_id' => 1,
+            'role_id' => 1,
+        ]);
     }
 }

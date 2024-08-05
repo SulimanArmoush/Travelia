@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use \App\Models\Permissions\User;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -33,9 +34,9 @@ class DatabaseSeeder extends Seeder
                 'photo' => 'images/My_photo.jpg',
                 'passport' => 'images/passport_image.jpg',
                 'role_id' => '1',
-                'deviceToken'=>'I am the Admin ولااااك',
-                'created_at'=>now(),
-                'updated_at'=>now(),
+                'deviceToken' => 'I am the Admin ولااااك',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }

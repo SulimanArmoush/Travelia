@@ -10,14 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Not extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
         'body',
     ];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class,'from');
+        return $this->belongsTo(User::class, 'from');
     }
 }

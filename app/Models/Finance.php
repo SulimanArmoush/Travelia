@@ -22,12 +22,13 @@ class Finance extends Model
 
     //protected $hidden = ['created_at', 'updated_at'];
 
-    public function fromUser():BelongsTo
+    public function fromUser(): BelongsTo
     {
-        return $this->belongsTo(User::class,'from');
+        return $this->belongsTo(User::class, 'from');
     }
-    public function toUser():BelongsTo
+
+    public function toUser(): BelongsTo
     {
-        return $this->belongsTo(User::class,'to');
+        return $this->belongsTo(User::class, 'to');
     }
 }

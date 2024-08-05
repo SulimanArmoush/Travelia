@@ -7,7 +7,7 @@ use Kreait\Firebase\Messaging\Notification;
 
 trait NotificationTrait
 {
-    public function send($deviceToken,$title,$body): void
+    public function send($deviceToken, $title, $body): void
     {
         $messaging = app('firebase.messaging');
 

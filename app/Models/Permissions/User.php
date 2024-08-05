@@ -75,41 +75,42 @@ class User extends Authenticatable
     }
 
 
-    public function role():BelongsTo
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-    public function reservations():hasMany
+    public function reservations(): hasMany
     {
         return $this->hasMany(Reservation::class);
     }
 
-    public function tripReservations():hasMany
+    public function tripReservations(): hasMany
     {
         return $this->hasMany(TripReservation::class);
     }
 
-    public function facility():hasOne
+    public function facility(): hasOne
     {
         return $this->hasOne(Facility::class)->with('location');
     }
 
-    public function favorites():BelongsToMany
+    public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(Organizer::class, 'favorites');
     }
 
-    public function recuirement():hasOne
+    public function recuirement(): hasOne
     {
         return $this->hasOne(Requirement::class);
     }
-    public function finances():hasMany
+
+    public function finances(): hasMany
     {
-        return $this->hasMany(Finance::class , 'to');
+        return $this->hasMany(Finance::class, 'to');
     }
 
-    public function notifications():hasMany
+    public function notifications(): hasMany
     {
         return $this->hasMany(Not::class);
 

@@ -15,40 +15,42 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Facility extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
         'img',
         'location_id',
         'user_id',
-    ] ;
+    ];
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function location():BelongsTo
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
     }
 
-    public function hotel() :hasOne
+    public function hotel(): hasOne
     {
         return $this->hasOne(Hotel::class);
     }
-    public function restaurant() :hasOne
+
+    public function restaurant(): hasOne
     {
         return $this->hasOne(Restaurant::class);
     }
 
-    public function organizer():hasOne
+    public function organizer(): hasOne
     {
         return $this->hasOne(Organizer::class);
     }
 
-    public function transporter():hasOne
+    public function transporter(): hasOne
     {
         return $this->hasOne(Transporter::class);
     }

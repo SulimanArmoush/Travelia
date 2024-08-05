@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -26,8 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('role_id');
             $table->double('wallet')->default(0.0);
             $table->string('type')->default('noType');
-            $table->set('confirmation', ['0','1','2','3'])->default('0');
-
+            $table->set('confirmation', ['0', '1', '2', '3'])->default('0');
 
 
             $table->rememberToken();
